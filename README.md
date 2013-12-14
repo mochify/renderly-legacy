@@ -25,4 +25,8 @@ So the flow of the program:
 
 * Start the engine
 * Pass in arguments to allow you to specify certain things
- * Test number to 
+ * Test number(s) to test
+ * Types of test(s) to run (like running all things of type 'lp')
+* Read in all the tests necessary (numbers, types, everything)
+* Process all the things and do all the comparisons
+* Generate a report with failures WITH NUSTACHE
