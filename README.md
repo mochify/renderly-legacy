@@ -1,23 +1,25 @@
 So Renderly has these main responsibilities:
 
 * Reads data in from file/database for list of test cases to run
+* Hits the URLs, grabs the generated render, compares them with a reference image
+* Generates a report of the URLs that failed, and for what reason(s) they failed
 
 A test case specifies the following:
 
-# URL to hit for a preview
-# A location of the reference image (currently a UNC path somewhere)
-# The type of test (matching, live preview, dip, blah blah, this is only for processing purposes)
+1. URL to hit for a preview
+2. A location of the reference image (currently a UNC path somewhere)
+3. The type of test (matching, live preview, dip, blah blah, this is only for processing purposes)
 
 The data model will be:
 
-# Test Case Number (int, PK)
-# Test Type (string)
-# URL to render (URL/string/blah)
-# Reference location (string, two parts - TypeOfLocation:Location)
-# Date Added (date)
-# Date Modified (date)
-# Release Added (string)
-# Description (optional, string)
+* Test Case Number (int, PK)
+* Test Type (string)
+* URL to render (URL/string/blah)
+* Reference location (string, two parts - TypeOfLocation:Location)
+* Date Added (date)
+* Date Modified (date)
+* Release Added (string)
+* Description (optional, string)
 
 So the flow of the program:
 
