@@ -13,11 +13,14 @@ namespace Renderly
         private IList<int> _testCasesToRun = new List<int>();
         private IList<string> _testClassesToRun = new List<string>();
         private bool _showHelp = false;
+        private string _reportName = "";
+        private string _dataSource = "";
+        private string _directory = "";
 
         public string Datasource
         {
-            get;
-            set;
+            get { return _dataSource; }
+            set { _dataSource = value; }
         }
 
         public IList<int> TestCasesToRun
@@ -34,6 +37,18 @@ namespace Renderly
         {
             get { return _showHelp; }
             set { _showHelp = value; }
+        }
+
+        public string Directory
+        {
+            get { return _directory; }
+            set { _directory = value; }
+        }
+
+        public string ReportName
+        {
+            get { return _reportName; }
+            set { _reportName = value; }
         }
 
         private OptionSet GetParser()
@@ -54,6 +69,16 @@ namespace Renderly
                     "c|class=",
                     "The class of tests to run from the datasource. Will run all the tests with a specific class. Can be specified more than once",
                     (string x) => TestClassesToRun.Add(x)
+                },
+                {
+                    "n|name=",
+                    "The name of the report to generate",
+                    (string x) => ReportName = x
+                },
+                {
+                    "o|dir=",
+                    "The parent directory to write the report to. This will be combined with the Report name argument",
+                    (string x) => Directory = x
                 },
                 {
                     "h|help",

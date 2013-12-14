@@ -12,9 +12,9 @@ namespace Renderly
         public string Type { get; set; }
         public string Url { get; set; }
         public string ReferenceLocation { get; set; }
-        public DateTime DateAdded { get; set; }
-        public DateTime DateModified { get; set; }
-        public string Release { get; set; }
-        public string Description { get; set; }
+        //public DateTime DateAdded { get; set; }
+        //public DateTime DateModified { get; set; }
+        //public string Release { get; set; }
+        //public string Description { get; set; }
     }
 }

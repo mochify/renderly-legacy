@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using System.IO;
 
 using CsvHelper;
-using Nustache.Core;
 
 namespace Renderly
 {
@@ -35,13 +34,24 @@ namespace Renderly
                 return;
             }
 
-            //var csv = new CsvReader(new StreamReader(parser.Datasource));
-            //csv.Configuration.HasHeaderRecord = true;
-            //while (csv.Read())
-            //{
-            //    Console.WriteLine("{0}", csv.GetField<int>(0));
-            //    Console.WriteLine("{0}", csv.GetField<string>(1));
-            //}
+            bool initialized = true;
+            if (string.IsNullOrEmpty(parser.Directory))
+            {
+                Console.WriteLine("Specify a directory");
+                initialized = false;
+            }
+
+            if (string.IsNullOrEmpty(parser.ReportName))
+            {
+                Console.WriteLine("Specify a report name");
+                initialized = false;
+            }
+
+            if(!initialized)
+            {
+                Console.WriteLine("Missing arguments. Cannot initialize. Try again.");
+                return;
+            }
 
             var testCases = new CsvModel().GetTestCases(parser.Datasource).ToList();
 
@@ -49,11 +59,34 @@ namespace Renderly
             foreach (var tc in testCases)
             {
                 Console.WriteLine("{0} - {1} - {2} - {3}", tc.TestId, tc.Type, tc.Url, tc.ReferenceLocation);
-                Console.WriteLine("{0} - {1} - {3}", tc.DateAdded, tc.DateModified, tc.Release, tc.Description);
+                //Console.WriteLine("{0} - {1} - {3}", tc.DateAdded, tc.DateModified, tc.Release, tc.Description);
             }
 
+            var directory = Directory.CreateDirectory(parser.Directory);
+            var reportDirectory = directory.CreateSubdirectory(parser.ReportName);
+
             var controller = new PreviewController();
-            controller.RunTests(testCases);
+            var results = controller.RunTests(testCases, reportDirectory);
+
+            var reportDict = new Dictionary<string, object>();
+            reportDict.Add("reportname", parser.ReportName);
+            reportDict.Add("result", results);
+
+            var view = new View();
+            var html = view.GenerateReport(@"C:\Users\billylee\Documents\visual studio 2013\Projects\Renderly\Renderly\Templates\rendering-results.mustache", reportDict);
+
+
+
+            using (var writer = new StreamWriter(Path.Combine(reportDirectory.FullName, "report.html")))
+            {
+                writer.WriteAsync(html);
+            }
+            //Console.WriteLine(html);
+
+            //foreach (var r in results)
+            //{
+            //    Console.WriteLine("Test Case {0} - {1}", r.TestId, r.TestPassed ? "passed" : "failed");
+            //}
         }
     }
 }
