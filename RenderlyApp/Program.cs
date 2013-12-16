@@ -11,6 +11,7 @@ using Renderly.Imaging;
 using Renderly.Models;
 using Renderly.Views;
 using Renderly.Controllers;
+using RenderlyApp.Options;
 
 using Autofac;
 
@@ -35,7 +36,7 @@ namespace RenderlyApp
 
 
 
-            var parser = new OptionParser();
+            var parser = new RenderingOptions();
             try
             {
                 parser.ParseArgs(args);

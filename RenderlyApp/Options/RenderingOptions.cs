@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 using NDesk.Options;
 
-namespace RenderlyApp
+namespace RenderlyApp.Options
 {
-    class OptionParser
+    class RenderingOptions
     {
         private IList<int> _testCasesToRun = new List<int>();
         private IList<string> _testClassesToRun = new List<string>();
