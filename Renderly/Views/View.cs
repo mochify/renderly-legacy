@@ -8,12 +8,12 @@ using Nustache.Core;
 
 using Newtonsoft.Json;
 
-namespace Renderly
+namespace Renderly.Views
 {
     /// <summary>
     /// This is a b
     /// </summary>
-    class View
+    public class View
     {
         public View()
         {

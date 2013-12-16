@@ -7,12 +7,12 @@ using System.IO;
 
 using CsvHelper;
 
-namespace Renderly
+namespace Renderly.Models
 {
     /// <summary>
     /// Prototype model class that opens a backing data store (CSV for now)
     /// </summary>
-    class CsvModel
+    public class CsvModel
     {
         public CsvModel()
         {

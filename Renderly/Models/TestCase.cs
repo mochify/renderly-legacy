@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Renderly
 {
-    class TestCase
+    public class TestCase
     {
         public int TestId { get; set; }
         public string Type { get; set; }

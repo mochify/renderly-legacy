@@ -7,13 +7,13 @@ using System.Drawing;
 using AForge.Imaging;
 using AForge.Imaging.Filters;
 
-namespace Renderly
+namespace Renderly.Imaging
 {
-    class StandaloneImageComparator
+    public class StandaloneImageComparator : IImageComparer
     {
-        public bool Matches(Bitmap reference, Bitmap compare)
+        public bool Matches(Bitmap reference, Bitmap compare, float threshold)
         {
-            var tm = new ExhaustiveTemplateMatching(1.0f);
+            var tm = new ExhaustiveTemplateMatching(threshold);
             TemplateMatch[] matchings = tm.ProcessImage(compare, reference);
             return matchings.Any() ? true : false;
         }

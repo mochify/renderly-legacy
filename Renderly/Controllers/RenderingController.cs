@@ -10,13 +10,23 @@ using System.Drawing.Imaging;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace Renderly
-{
-    class PreviewController
-    {
-        public PreviewController()
-        {
+using Renderly.Imaging;
 
+using Autofac;
+
+namespace Renderly.Controllers
+{
+    public class RenderingController
+    {
+        private IImageComparer _imageComparer;
+
+        public RenderingController(IImageComparer comparer)
+        {
+            if (comparer == null)
+            {
+                throw new ArgumentNullException("comparer");
+            }
+            _imageComparer = comparer;
         }
 
         public IEnumerable<TestResult> RunTests(IEnumerable<TestCase> testCases, DirectoryInfo reportDir)
@@ -56,8 +66,7 @@ namespace Renderly
                         gr.DrawImage(preview, new Rectangle(0, 0, preview.Width, preview.Height));
                     }
 
-                    var cmp = new StandaloneImageComparator();
-                    if (!cmp.Matches(reference, convertedPreview))
+                    if (!_imageComparer.Matches(reference, convertedPreview))
                     {
                         result.TestPassed = false;
                         result.WithComment("Source and Reference image do not match exactly.");
@@ -67,7 +76,7 @@ namespace Renderly
                         result.TestPassed = true;
                     }
 
-                    using (var diffImage = cmp.GenerateDifferenceMap(reference, convertedPreview))
+                    using (var diffImage = _imageComparer.GenerateDifferenceMap(reference, convertedPreview))
                     {
                         // write all the files
                         // TODO wrap each test run with a driver that writes the result files, rather
