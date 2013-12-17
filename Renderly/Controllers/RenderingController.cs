@@ -12,8 +12,6 @@ using System.Windows.Media.Imaging;
 
 using Renderly.Imaging;
 
-using Autofac;
-
 namespace Renderly.Controllers
 {
     public class RenderingController
