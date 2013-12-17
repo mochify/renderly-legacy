@@ -12,6 +12,7 @@ using Renderly.Models;
 using Renderly.Views;
 using Renderly.Controllers;
 using RenderlyApp.Options;
+using ManyConsole;
 
 using Autofac;
 
@@ -30,85 +31,90 @@ namespace RenderlyApp
             return builder;
         }
 
+        private static IEnumerable<ConsoleCommand> GetCommands()
+        {
+            return ConsoleCommandDispatcher.FindCommandsInSameAssemblyAs(typeof(Program));
+        }
+
         static void Main(string[] args)
         {
             var containerBuilder = RegisterAssemblyTypes();
 
+            var commands = GetCommands();
+            ConsoleCommandDispatcher.DispatchCommand(commands, args, Console.Out);
+            //var parser = new RenderingOptions();
+            //try
+            //{
+            //    parser.ParseArgs(args);
+            //}
+            //catch (Exception e)
+            //{
+            //    Console.WriteLine("Problem parsing arguments");
+            //    Console.WriteLine(e.Message);
+            //    return;
+            //}
+
+            //// now we want to open the model, then pass the data to the controller,
+            //// then generate a report
+
+            //if (parser.ShowHelp)
+            //{
+            //    parser.ShowHelpMessage();
+            //    return;
+            //}
+
+            //bool initialized = true;
+            //if (string.IsNullOrEmpty(parser.Directory))
+            //{
+            //    Console.WriteLine("Specify a directory");
+            //    initialized = false;
+            //}
+
+            //if (string.IsNullOrEmpty(parser.ReportName))
+            //{
+            //    Console.WriteLine("Specify a report name");
+            //    initialized = false;
+            //}
+
+            //if (!initialized)
+            //{
+            //    Console.WriteLine("Missing arguments. Cannot initialize. Try again.");
+            //    return;
+            //}
+
+            //var testCases = new CsvModel().GetTestCases(parser.Datasource).ToList();
 
 
-            var parser = new RenderingOptions();
-            try
-            {
-                parser.ParseArgs(args);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine("Problem parsing arguments");
-                Console.WriteLine(e.Message);
-                return;
-            }
+            //foreach (var tc in testCases)
+            //{
+            //    Console.WriteLine("{0} - {1} - {2} - {3}", tc.TestId, tc.Type, tc.Url, tc.ReferenceLocation);
+            //    //Console.WriteLine("{0} - {1} - {3}", tc.DateAdded, tc.DateModified, tc.Release, tc.Description);
+            //}
 
-            // now we want to open the model, then pass the data to the controller,
-            // then generate a report
+            //var directory = Directory.CreateDirectory(parser.Directory);
+            //var reportDirectory = directory.CreateSubdirectory(parser.ReportName);
 
-            if (parser.ShowHelp)
-            {
-                parser.ShowHelpMessage();
-                return;
-            }
+            //using (var container = containerBuilder.Build())
+            //{
+            //    var comparator = container.Resolve<IImageComparer>();
+            //    var controller = new RenderingController(comparator);
+            //    var results = controller.RunTests(testCases, reportDirectory);
 
-            bool initialized = true;
-            if (string.IsNullOrEmpty(parser.Directory))
-            {
-                Console.WriteLine("Specify a directory");
-                initialized = false;
-            }
+            //    var reportDict = new Dictionary<string, object>();
+            //    reportDict.Add("reportname", parser.ReportName);
+            //    reportDict.Add("result", results);
 
-            if (string.IsNullOrEmpty(parser.ReportName))
-            {
-                Console.WriteLine("Specify a report name");
-                initialized = false;
-            }
+            //    var view = new View();
 
-            if (!initialized)
-            {
-                Console.WriteLine("Missing arguments. Cannot initialize. Try again.");
-                return;
-            }
+            //    var templateName = "rendering-results.mustache";
+            //    var templatePath = Path.Combine(parser.TemplateDir, templateName);
+            //    var html = view.GenerateReport(templatePath, reportDict);
 
-            var testCases = new CsvModel().GetTestCases(parser.Datasource).ToList();
-
-
-            foreach (var tc in testCases)
-            {
-                Console.WriteLine("{0} - {1} - {2} - {3}", tc.TestId, tc.Type, tc.Url, tc.ReferenceLocation);
-                //Console.WriteLine("{0} - {1} - {3}", tc.DateAdded, tc.DateModified, tc.Release, tc.Description);
-            }
-
-            var directory = Directory.CreateDirectory(parser.Directory);
-            var reportDirectory = directory.CreateSubdirectory(parser.ReportName);
-
-            using (var container = containerBuilder.Build())
-            {
-                var comparator = container.Resolve<IImageComparer>();
-                var controller = new RenderingController(comparator);
-                var results = controller.RunTests(testCases, reportDirectory);
-
-                var reportDict = new Dictionary<string, object>();
-                reportDict.Add("reportname", parser.ReportName);
-                reportDict.Add("result", results);
-
-                var view = new View();
-
-                var templateName = "rendering-results.mustache";
-                var templatePath = Path.Combine(parser.TemplateDir, templateName);
-                var html = view.GenerateReport(templatePath, reportDict);
-
-                using (var writer = new StreamWriter(Path.Combine(reportDirectory.FullName, "report.html")))
-                {
-                    writer.WriteAsync(html);
-                }
-            }
+            //    using (var writer = new StreamWriter(Path.Combine(reportDirectory.FullName, "report.html")))
+            //    {
+            //        writer.WriteAsync(html);
+            //    }
+            //}
 
             //Console.WriteLine(html);
 
