@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 using NDesk.Options;
 
-namespace Renderly
+namespace RenderlyApp.Options
 {
-    class OptionParser
+    class RenderingOptions
     {
         private IList<int> _testCasesToRun = new List<int>();
         private IList<string> _testClassesToRun = new List<string>();
@@ -16,6 +16,7 @@ namespace Renderly
         private string _reportName = "";
         private string _dataSource = "";
         private string _directory = "";
+        private string _templateDir = "";
 
         public string Datasource
         {
@@ -51,6 +52,12 @@ namespace Renderly
             set { _reportName = value; }
         }
 
+        public string TemplateDir
+        {
+            get { return _templateDir; }
+            set { _templateDir = value; }
+        }
+
         private OptionSet GetParser()
         {
             var os = new OptionSet
@@ -79,6 +86,11 @@ namespace Renderly
                     "o|dir=",
                     "The parent directory to write the report to. This will be combined with the Report name argument",
                     (string x) => Directory = x
+                },
+                {
+                    "t|templatedir=",
+                    "The directory where report templates are stored",
+                    (string x) => TemplateDir = x
                 },
                 {
                     "h|help",

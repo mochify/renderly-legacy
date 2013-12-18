@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Renderly
 {
-    class TestResult
+    public class TestResult
     {
         private IList<string> _comments = new List<string>();
         public int TestId { get; set; }
