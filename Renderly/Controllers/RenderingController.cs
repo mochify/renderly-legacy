@@ -35,7 +35,7 @@ namespace Renderly.Controllers
             foreach(var tc in testCases)
             {
                 var testId = tc.TestId;
-                var url = tc.Url;
+                var url = tc.SourceLocation;
                 var type = tc.Type;
                 var refImage = tc.ReferenceLocation;
 
@@ -57,7 +57,7 @@ namespace Renderly.Controllers
                 using(var ms = new MemoryStream(imageBytes))
                 using(var preview = new Bitmap(ms))
                 using(var convertedPreview = new Bitmap(preview.Width, preview.Height, System.Drawing.Imaging.PixelFormat.Format24bppRgb))
-                using(var reference = new Bitmap(refImage))
+                using(var reference = new Bitmap(string.Format(@"{0}", refImage)))
                 {
                     using (var gr = Graphics.FromImage(convertedPreview))
                     {

@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 using ManyConsole;
+using Renderly.Models;
+using Renderly.Utils;
 
 namespace RenderlyApp.Options
 {
@@ -18,13 +21,16 @@ namespace RenderlyApp.Options
     /// </summary>
     public class BatchGenTestCaseCommand : ConsoleCommand
     {
-        public string InputFile;
-        public string AppendTestFile;
+        public string InputFile { get; set; }
+        public string AppendTestFile { get; set; }
+        public string OutputFile { get; set; }
+        public bool ModifyInPlace { get; set; }
 
         public BatchGenTestCaseCommand()
         {
             IsCommand("batchgen");
             HasRequiredOption("f|file=", "CSV file with the test cases to generate.", s => InputFile = s);
+            HasRequiredOption("o|out=", "CSV file to output with test cases.", s => OutputFile = s);
             HasOption("a|append=", "Test Cases to append to", s => AppendTestFile = s);
         }
 
@@ -41,6 +47,12 @@ namespace RenderlyApp.Options
             }
 
             Console.WriteLine("You are generating tests from {0}", InputFile);
+            Console.WriteLine("You are writing out to {0}", OutputFile);
+
+            var model = new CsvModel(OutputFile);
+            var shellModel = new ShellTestCsvModel(InputFile);
+            model.GenerateTestCases(shellModel.GetTestCases());
+            model.Serialize(OutputFile);
 
             return 0;
         }
