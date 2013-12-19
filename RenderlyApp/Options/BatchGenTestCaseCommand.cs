@@ -37,6 +37,7 @@ namespace RenderlyApp.Options
 
         public override int Run(string[] remainingArguments)
         {
+            var inputCsvFile = OutputFile;
             if (string.IsNullOrWhiteSpace(AppendTestFile))
             {
                 Console.WriteLine("Not appending to anything.");
@@ -44,12 +45,13 @@ namespace RenderlyApp.Options
             else
             {
                 Console.WriteLine("Appending to {0}", AppendTestFile);
+                inputCsvFile = AppendTestFile;
             }
 
             Console.WriteLine("You are generating tests from {0}", InputFile);
             Console.WriteLine("You are writing out to {0}", OutputFile);
 
-            var model = new CsvModel(OutputFile);
+            var model = new CsvModel(inputCsvFile);
             var shellModel = new ShellTestCsvModel(InputFile);
             model.GenerateTestCases(shellModel.GetTestCases());
             model.Serialize(OutputFile);
