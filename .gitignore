@@ -1,0 +1,7 @@
+packages
+!packages/repositories.config
+bin
+obj
+*.suo
+*.sln
+.nuget
