@@ -19,6 +19,10 @@ namespace RenderlyApp.Commands
 
         public DeleteTestcaseCommand()
         {
+            Dates = Enumerable.Empty<DateTime>();
+            Releases = Enumerable.Empty<string>();
+            TestIds = Enumerable.Empty<int>();
+
             IsCommand("deletetest", "Delete test cases (and their reference images) from a model");
             HasRequiredOption("f|file=", "Model file to delete test cases from.", s => ModelFile = s);
             HasOption("d|dates=", "Comma-separated list of dates to delete test cases for. MM-DD-YYYY format.",
@@ -36,41 +40,33 @@ namespace RenderlyApp.Commands
         {
             var model = new CsvModel(ModelFile);
 
-            if (Dates == null && Releases == null && TestIds == null)
+            if (!Dates.Any() && !Releases.Any() && !TestIds.Any())
             {
-                throw new ArgumentException("Please specify at least one of (dates, release, test Ids).");
+                Console.WriteLine("Nothing to do, please specify at least one of dates|releases|test ids");
             }
 
             var predicate = PredicateBuilder.False<TestCase>();
-            if (Dates != null)
+
+            foreach (var d in Dates)
             {
-                foreach (var d in Dates)
-                {
-                    predicate = predicate.Or(x => x.DateAdded.Date == d.Date);
-                }
+                predicate = predicate.Or(x => x.DateAdded.Date == d.Date);
             }
 
-            if (Releases != null)
+            foreach (var s in Releases)
             {
-                foreach(var s in Releases)
-                {
-                    predicate = predicate.Or(x => x.Release == s);
-                }
+                predicate = predicate.Or(x => x.Release == s);
             }
 
-            if (TestIds != null)
+            foreach (var t in TestIds)
             {
-                foreach(var t in TestIds)
-                {
 
-                    predicate = predicate.Or(x => x.TestId == t);
-                }
+                predicate = predicate.Or(x => x.TestId == t);
             }
+
 
             var deleted = model.Delete(predicate.Compile());
             Console.WriteLine("Deleted {0} test cases from {1}", deleted, ModelFile);
 
-            
             model.Serialize(OutputFile);
 
             return 0;
