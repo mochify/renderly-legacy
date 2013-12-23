@@ -11,7 +11,7 @@ using Renderly.Imaging;
 using Renderly.Models;
 using Renderly.Views;
 using Renderly.Controllers;
-using RenderlyApp.Options;
+using RenderlyApp.Commands;
 using ManyConsole;
 
 using Autofac;

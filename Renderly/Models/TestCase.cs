@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Renderly
+namespace Renderly.Models
 {
     public class TestCase
     {

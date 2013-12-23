@@ -46,12 +46,43 @@ namespace Renderly.Models
             }
         }
 
+        /// <summary>
+        /// Delete test cases from the model.
+        /// </summary>
+        /// <returns>A count of all the uploads removed from the underlying model</returns>
+        public int Delete(Func<TestCase, bool> predicate)
+        {
+            var beforeCount = _data.Count();
+            var toDelete = _data.Where(predicate).ToList();
+            foreach(var tc in toDelete)
+            {
+                Console.WriteLine(tc.TestId);
+                try
+                {
+                    File.Delete(tc.ReferenceLocation);
+                }
+                catch(Exception e)
+                {
+                    // TODO propagate this upward and let a logger handle it.
+                    Console.WriteLine("Can't delete file {0}", tc.ReferenceLocation);
+                    Console.WriteLine(e.Message);
+                }
+            }
+            _data = _data.Where(x => !predicate(x)).ToList();
+            return beforeCount - _data.Count();
+        }
+
         public IEnumerable<TestCase> GetTestCases()
         {
             // If you're unfamiliar with this Skip(0), it basically yields
             // each item in the list but you can not use the returned IEnumerable
             // to modify the underlying collection by casting it back to ICollection
             return _data.Skip(0);
+        }
+
+        public IEnumerable<TestCase> GetTestCases(Func<TestCase, bool> predicate)
+        {
+            return _data.Where(predicate);
         }
 
         public void GenerateTestCases(IEnumerable<ShellTestCase> shellCases)

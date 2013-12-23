@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using Renderly.Models;
+
 using CsvHelper;
 using CsvHelper.TypeConversion;
 using CsvHelper.Configuration;
