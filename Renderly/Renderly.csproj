@@ -86,6 +86,7 @@
   <ItemGroup>
     <Compile Include="Drivers\IDriver.cs" />
     <Compile Include="Drivers\RenderingDriver.cs" />
+    <Compile Include="Imaging\AbstractImageComparer.cs" />
     <Compile Include="Imaging\IImageComparer.cs" />
     <Compile Include="Controllers\RenderingController.cs" />
     <Compile Include="Models\CsvModel.cs" />

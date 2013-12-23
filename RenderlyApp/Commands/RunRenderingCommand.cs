@@ -22,6 +22,7 @@ namespace RenderlyApp.Commands
         private string OutputDirectory { get; set; }
         private string TemplateDirectory { get; set; }
         private bool ReportAllResults { get; set; }
+        private float Threshold { get; set; }
         private IEnumerable<DateTime> Dates { get; set; }
         private IEnumerable<string> Releases { get; set; }
         private IEnumerable<int> TestIds { get; set; }
@@ -37,6 +38,8 @@ namespace RenderlyApp.Commands
             HasRequiredOption("n|name=", "The name of the report to generate", x => ReportName = x);
             HasRequiredOption("o|outdir=", "The directory to generate the report in", x => OutputDirectory = x);
             HasRequiredOption("m|templatedir=", "The directory to get templates for report generation", x => TemplateDirectory = x);
+            HasOption("threshold=", "Threshold value to configure how aggressive image comparison is (0-100). 100 is exact match.",
+                x => Threshold = float.Parse(x) / 100.0f);
             HasOption("showall", "Show all results in report (including successes). By default, only failures are shown.",
                 x => ReportAllResults = x != null);
             HasOption("t|testids=", "Comma-separated list of test IDs to run",
@@ -78,7 +81,7 @@ namespace RenderlyApp.Commands
                 testCases = model.GetTestCases(predicate.Compile());
             }
             
-            var controller = new RenderingController(new StandaloneImageComparator());
+            var controller = new RenderingController(new StandaloneImageComparator(Threshold));
             var directory = Directory.CreateDirectory(OutputDirectory);
             var reportDir = directory.CreateSubdirectory(ReportName);
             var results = controller.RunTests(testCases, reportDir);
