@@ -25,7 +25,7 @@ namespace RenderlyApp.Options
 
         public RunRenderingCommand()
         {
-            IsCommand("testrender");
+            IsCommand("run", "Run a rendering job");
             HasRequiredOption("d|datasource=", "The datasource to get test cases from.", x => DataSource = x);
             HasRequiredOption("n|name=", "The name of the report to generate", x => ReportName = x);
             HasRequiredOption("o|outdir=", "The directory to generate the report in", x => OutputDirectory = x);

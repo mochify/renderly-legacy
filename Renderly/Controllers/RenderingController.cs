@@ -10,6 +10,7 @@ using System.Drawing.Imaging;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
+using Renderly.Models;
 using Renderly.Imaging;
 
 namespace Renderly.Controllers

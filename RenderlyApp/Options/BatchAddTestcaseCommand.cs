@@ -19,16 +19,16 @@ namespace RenderlyApp.Options
     /// - release
     /// - description (optional, leave blank if you want)
     /// </summary>
-    public class BatchGenTestCaseCommand : ConsoleCommand
+    public class BatchAddTestcaseCommand : ConsoleCommand
     {
         public string InputFile { get; set; }
         public string AppendTestFile { get; set; }
         public string OutputFile { get; set; }
         public bool ModifyInPlace { get; set; }
 
-        public BatchGenTestCaseCommand()
+        public BatchAddTestcaseCommand()
         {
-            IsCommand("batchgen");
+            IsCommand("batchadd", "Add test cases as a batch");
             HasRequiredOption("f|file=", "CSV file with the test cases to generate.", s => InputFile = s);
             HasRequiredOption("o|out=", "CSV file to output with test cases.", s => OutputFile = s);
             HasOption("a|append=", "Test Cases to append to", s => AppendTestFile = s);

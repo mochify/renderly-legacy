@@ -35,13 +35,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Autofac">
-      <HintPath>packages\Autofac.3.2.0\lib\net40\Autofac.dll</HintPath>
+      <HintPath>..\packages\Autofac.3.2.0\lib\net40\Autofac.dll</HintPath>
     </Reference>
     <Reference Include="ManyConsole">
-      <HintPath>packages\ManyConsole.0.4.2.17\lib\ManyConsole.dll</HintPath>
+      <HintPath>..\packages\ManyConsole.0.4.2.17\lib\ManyConsole.dll</HintPath>
     </Reference>
     <Reference Include="NDesk.Options">
-      <HintPath>packages\NDesk.Options.0.2.1\lib\NDesk.Options.dll</HintPath>
+      <HintPath>..\packages\NDesk.Options.0.2.1\lib\NDesk.Options.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -52,10 +52,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Options\BatchGenTestCaseCommand.cs" />
-    <Compile Include="Options\ManagerOptions.cs" />
-    <Compile Include="Options\RenderingOptions.cs" />
+    <Compile Include="Options\BatchAddTestcaseCommand.cs" />
+    <Compile Include="Options\DeleteTestcaseCommand.cs" />
     <Compile Include="Options\RunRenderingCommand.cs" />
+    <Compile Include="PredicateBuilder.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
