@@ -43,10 +43,11 @@ namespace Renderly.Controllers
                 var result = new TestResult().ForTestId(testId);
                 results.Add(result);
 
+                var uri = new Uri(url);
                 byte[] imageBytes;
                 try
                 {
-                    imageBytes = wc.DownloadData(url);
+                    imageBytes = wc.DownloadData(uri);
                 }
                 catch (Exception e)
                 {

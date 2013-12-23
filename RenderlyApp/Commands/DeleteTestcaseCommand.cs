@@ -28,7 +28,7 @@ namespace RenderlyApp.Commands
             HasOption("d|dates=", "Comma-separated list of dates to delete test cases for. MM-DD-YYYY format.",
                 x => { Dates = x.Split(',').Select(DateTime.Parse); });
             HasOption("r|releases=", "Comma-separated list of releases to delete test cases for",
-                x => { Releases = x.Split(','); });
+                x => { Releases = x.Replace(" ", "").Split(','); });
             HasOption("t|testids=", "Comma-separated list of test IDs to delete",
                 x => { TestIds = x.Split(',').Select(Int32.Parse); });
             HasOption("o|outfile=", "File to save test cases to. If no file is specified, the input file is overwritten.",

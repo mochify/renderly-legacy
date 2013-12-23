@@ -18,9 +18,8 @@ namespace Renderly.Imaging
         /// </summary>
         /// <param name="reference">The reference/base image to use for comparison. Should be a 24 bit RGB bitmap.</param>
         /// <param name="compare">The image to compare the reference against. Should be a 24 bit RGB bitmap.</param>
-        /// <param name="threshold">A floating point value specifying the tolerance for how much images can differ before reference and compare are considered non-matching</param>
         /// <returns></returns>
-        bool Matches(Bitmap reference, Bitmap compare, float threshold = 1.0f);
+        bool Matches(Bitmap reference, Bitmap compare);
 
         /// <summary>
         /// Generates an image that shows the pixel differences between a reference and comparison image.
