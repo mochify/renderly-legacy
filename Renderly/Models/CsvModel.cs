@@ -80,6 +80,11 @@ namespace Renderly.Models
             return _data.Skip(0);
         }
 
+        public IEnumerable<TestCase> GetTestCases(Func<TestCase, bool> predicate)
+        {
+            return _data.Where(predicate);
+        }
+
         public void GenerateTestCases(IEnumerable<ShellTestCase> shellCases)
         {
             // TODO if this is a significant runtime turtle, may need to convert

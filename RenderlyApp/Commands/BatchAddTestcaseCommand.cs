@@ -9,7 +9,7 @@ using ManyConsole;
 using Renderly.Models;
 using Renderly.Utils;
 
-namespace RenderlyApp.Options
+namespace RenderlyApp.Commands
 {
     /// <summary>
     /// This is the ConsoleCommand that handles batch generation of test cases from a file.

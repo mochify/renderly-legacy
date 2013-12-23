@@ -13,7 +13,7 @@ using Renderly.Views;
 using ManyConsole;
 
 
-namespace RenderlyApp.Options
+namespace RenderlyApp.Commands
 {
     class RunRenderingCommand : ConsoleCommand
     {

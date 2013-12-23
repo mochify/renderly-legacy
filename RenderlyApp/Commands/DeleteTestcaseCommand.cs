@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using ManyConsole;
 using Renderly.Models;
 
-namespace RenderlyApp.Options
+namespace RenderlyApp.Commands
 {
     public class DeleteTestcaseCommand : ConsoleCommand
     {
