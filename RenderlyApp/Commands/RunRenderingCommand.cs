@@ -17,14 +17,14 @@ namespace RenderlyApp.Commands
 {
     class RunRenderingCommand : ConsoleCommand
     {
-        public string DataSource { get; set; }
-        public string ReportName { get; set; }
-        public string OutputDirectory { get; set; }
-        public string TemplateDirectory { get; set; }
+        private string DataSource { get; set; }
+        private string ReportName { get; set; }
+        private string OutputDirectory { get; set; }
+        private string TemplateDirectory { get; set; }
+        private bool ReportAllResults { get; set; }
         private IEnumerable<DateTime> Dates { get; set; }
         private IEnumerable<string> Releases { get; set; }
         private IEnumerable<int> TestIds { get; set; }
-
 
         public RunRenderingCommand()
         {
@@ -37,6 +37,8 @@ namespace RenderlyApp.Commands
             HasRequiredOption("n|name=", "The name of the report to generate", x => ReportName = x);
             HasRequiredOption("o|outdir=", "The directory to generate the report in", x => OutputDirectory = x);
             HasRequiredOption("m|templatedir=", "The directory to get templates for report generation", x => TemplateDirectory = x);
+            HasOption("showall", "Show all results in report (including successes). By default, only failures are shown.",
+                x => ReportAllResults = x != null);
             HasOption("t|testids=", "Comma-separated list of test IDs to run",
                 x => { TestIds = x.Split(',').Select(Int32.Parse); });
             HasOption("r|releases=", "Comma-separated list of releases to run",
@@ -81,8 +83,22 @@ namespace RenderlyApp.Commands
             var reportDir = directory.CreateSubdirectory(ReportName);
             var results = controller.RunTests(testCases, reportDir);
             var reportDict = new Dictionary<string, object>();
+
             reportDict.Add("reportname", ReportName);
-            reportDict.Add("result", results);
+
+            var failures = results.Where(r => !r.TestPassed);
+
+            var failcsv = string.Join(",", failures.Select(x => x.TestId));
+            reportDict.Add("failures", failcsv);
+
+            if (ReportAllResults)
+            {
+                reportDict.Add("result", results);
+            }
+            else
+            {
+                reportDict.Add("result", failures);
+            }
             var view = new View();
             var templateName = "rendering-results.mustache";
             var path = Path.Combine(TemplateDirectory, templateName);
