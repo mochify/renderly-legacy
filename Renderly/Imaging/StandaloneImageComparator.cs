@@ -9,16 +9,21 @@ using AForge.Imaging.Filters;
 
 namespace Renderly.Imaging
 {
-    public class StandaloneImageComparator : IImageComparer
+    public class StandaloneImageComparator : AbstractImageComparer
     {
-        public bool Matches(Bitmap reference, Bitmap compare, float threshold)
+        public StandaloneImageComparator(float threshold = 1.0f)
+            : base(threshold)
         {
-            var tm = new ExhaustiveTemplateMatching(threshold);
+        }
+
+        public override bool Matches(Bitmap reference, Bitmap compare)
+        {
+            var tm = new ExhaustiveTemplateMatching(Threshold);
             TemplateMatch[] matchings = tm.ProcessImage(compare, reference);
             return matchings.Any() ? true : false;
         }
 
-        public Bitmap GenerateDifferenceMap(Bitmap reference, Bitmap compare)
+        public override Bitmap GenerateDifferenceMap(Bitmap reference, Bitmap compare)
         {
             var filter = new Difference(reference);
             return filter.Apply(compare);
