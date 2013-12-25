@@ -103,37 +103,20 @@ namespace RenderlyApp.Commands
                 reportConfiguration.CopyReferenceImages = CopyReferenceImages;
                 reportConfiguration.DisplaySuccesses = ReportAllResults;
                 reportConfiguration.OutputDirectory = OutputDirectory;
+                reportConfiguration.TemplateDirectory = TemplateDirectory;
+                reportConfiguration.ReportName = ReportName;
                 reportConfiguration.ReportView = new MustacheView();
                 var reportService = new ReportService(fileManager, reportConfiguration);
 
                 var controller = new RenderingController(new ExhaustiveTemplateComparer(Threshold), fileManager);
                 var directory = Directory.CreateDirectory(OutputDirectory);
                 var results = controller.RunTests(testCases);
-                var reportDict = new Dictionary<string, object>();
-
-                reportDict.Add("reportname", ReportName);
-
-                //var failures = results.Where(r => !r.TestPassed);
-
-                //var failcsv = string.Join(",", failures.Select(x => x.TestId));
-                //reportDict.Add("failures", failcsv);
-
-                if (ReportAllResults)
+                foreach (var r in results) using (r)
                 {
-                    //reportDict.Add("result", results);
+                    reportService.AddResult(r);
                 }
-                else
-                {
-                    //reportDict.Add("result", failures);
-                }
-                //var view = new MustacheView();
-                //var templateName = "rendering-results.mustache";
-                //var path = Path.Combine(TemplateDirectory, templateName);
-                //var html = view.GenerateReport(path, reportDict);
-                //using (var writer = new StreamWriter(Path.Combine(reportDir.FullName, "report.html")))
-                //{
-                //    writer.WriteAsync(html);
-                //}
+
+                reportService.GenerateReport();
             }
             return 0;
         }

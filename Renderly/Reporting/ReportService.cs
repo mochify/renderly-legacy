@@ -14,7 +14,27 @@ namespace Renderly.Reporting
 {
     public class ReportService : IReportService
     {
-        IList<TestResult> _results;
+        /// <summary>
+        /// A lightweight class to hold basically the same stuff as Renderly.TestResult,
+        /// but without the image references. 
+        /// </summary>
+        class ReportResult
+        {
+            private IList<string> _comments = new List<string>();
+            public int TestId { get; set; }
+            public bool TestPassed { get; set; }
+            public string ReferencePath { get; set; }
+            public string SourcePath { get; set; }
+            public string DifferencePath { get; set; }
+
+            public IList<string> Comments
+            {
+                get { return _comments; }
+                set { _comments = value; }
+            }
+        }
+
+        IList<ReportResult> _results;
         IRenderlyAssetManager _assetManager;
         private readonly ReportServiceConfiguration _configuration;
 
@@ -27,7 +47,7 @@ namespace Renderly.Reporting
         {
             _assetManager = assetManager;
             _configuration = config;
-            _results = new List<TestResult>();
+            _results = new List<ReportResult>();
         }
 
 
@@ -48,9 +68,30 @@ namespace Renderly.Reporting
             if ((tr.TestPassed && Configuration.DisplaySuccesses)
                 || !tr.TestPassed)
             {
-                _results.Add(tr);
+                dynamic locations = PersistAssets(tr);
+                var reportResult = new ReportResult
+                {
+                    TestId = tr.TestId,
+                    TestPassed = tr.TestPassed,
+                    Comments = new List<string>(tr.Comments),
+                    SourcePath = MakeUri(locations.Source),
+                    ReferencePath = MakeUri(locations.Reference),
+                    DifferencePath = MakeUri(locations.Difference)
+                };
+                _results.Add(reportResult);
             }
-            PersistAssets(tr);
+        }
+
+        private string MakeUri(string path)
+        {
+            Uri uri;
+            bool created = Uri.TryCreate(path, UriKind.RelativeOrAbsolute, out uri);
+
+            if (created)
+            {
+                return uri.ToString();
+            }
+            return "";
         }
 
         private void CreateReportLayout()
@@ -72,13 +113,13 @@ namespace Renderly.Reporting
             var images = new List<Tuple<Image, string>>();
 
             var uuid = Guid.NewGuid().ToString("N");
-            var sourcePath = string.Format("images/{0}-{1}-generated.jpg", tr.TestId, uuid);
+            var sourcePath = string.Format("images/{1}-{2}-generated.jpg", Configuration.ReportName, tr.TestId, uuid);
             images.Add(Tuple.Create(tr.SourceImage, sourcePath));
 
-            var diffPath = string.Format("images/{0}-{1}-diff.jpg", tr.TestId, uuid);
+            var diffPath = string.Format("images/{1}-{2}-diff.jpg", Configuration.ReportName, tr.TestId, uuid);
             images.Add(Tuple.Create(tr.DifferenceImage, diffPath));
 
-            var referencePath = string.Format("images/{0}-{1}-reference.jpg", tr.TestId, uuid);
+            var referencePath = string.Format("images/{1}-{2}-reference.jpg", Configuration.ReportName, tr.TestId, uuid);
 
             if (Configuration.CopyReferenceImages)
             {
@@ -91,14 +132,19 @@ namespace Renderly.Reporting
 
             foreach (var image in images)
             {
-                using (var ms = new MemoryStream())
-                {
-                    image.Item1.Save(ms, ImageFormat.Jpeg);
-                    _assetManager.Save(ms, string.Join("/", Configuration.OutputDirectory, image.Item2));
-                }
+                image.Item1.Save(Path.Combine(Configuration.OutputDirectory, Configuration.ReportName, image.Item2));
+                //using (var ms = new MemoryStream())
+                //{
+                //    image.Item1.Save(ms, ImageFormat.Jpeg);
+                //    _assetManager.Save(ms, string.Join("/", Configuration.OutputDirectory, image.Item2));
+                //}
             }
-            return new { Reference = referencePath, Source = sourcePath, Diff = diffPath };
- 
+
+            // yes I am evil - returning an anonymous type via dynamic.
+            // This is localized to just inside this class, and I did tradeoff typesafety/autocomplete
+            // for ease of coding, since otherwise I'd have to make a new class
+            // or return a nameless Tuple
+            return new { Reference = referencePath, Source = sourcePath, Difference = diffPath };
         }
 
         private string GenerateFileName(string subdir, object identifier, object extension)
@@ -118,7 +164,7 @@ namespace Renderly.Reporting
                 reportDict.Add("result", _results);
                 var template = sr.ReadToEnd();
                 var output = Configuration.ReportView.GenerateTemplate(template, reportDict);
-                var outFile = Path.Combine(Configuration.OutputDirectory, "report.html");
+                var outFile = Path.Combine(Configuration.OutputDirectory, Configuration.ReportName, "report.html");
                 _assetManager.Save(output, outFile);
             }
 

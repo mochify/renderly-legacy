@@ -175,6 +175,37 @@ namespace RenderlyTests
         }
 
         [Test]
+        public void TestAddTestCaseProducesCorrectId()
+        {
+            var stream = new MemoryStream();
+            using (var writer = new StreamWriter(stream))
+            {
+                writer.WriteLine(string.Join(",", _header));
+                writer.Flush();
+
+                var manager = new MockFileManager();
+                using (var model = new CsvModel(stream, manager))
+                {
+                    var newCase = new TestCase
+                    {
+                        TestId = 1000,
+                        Type = "Newtype",
+                        Release = "28.6"
+                    };
+                    model.AddTestCase(newCase);
+                    var cases = model.GetTestCases(x => x.TestId == 1000).ToList();
+                    // this should not have found anything because the CSV Model will
+                    // assume its own ID generation responsibility.
+                    Assert.AreEqual(0, cases.Count());
+
+                    var allCases = model.GetTestCases();
+                    Assert.AreEqual(1, allCases.Count());
+                    Assert.AreEqual(1, allCases.First().TestId);
+                }
+            }
+        }
+
+        [Test]
         public void TestSave()
         {
             var stream = new MemoryStream();

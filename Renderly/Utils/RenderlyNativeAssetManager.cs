@@ -46,6 +46,7 @@ namespace Renderly.Utils
         {
             using(var ostream = new FileStream(savePath, FileMode.Create, FileAccess.Write))
             {
+                Console.WriteLine("Source Length: {0}", ostream.Length);
                 file.CopyTo(ostream);
             }
         }
