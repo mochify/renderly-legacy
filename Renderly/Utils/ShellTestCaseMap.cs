@@ -15,7 +15,6 @@ namespace Renderly.Utils
         {
             Map(m => m.Type).Name("Type");
             Map(m => m.ReferenceLocation).Name("Reference Location");
-            Map(m => m.ReferenceSaveFolder).Name("Reference Save Folder");
             Map(m => m.Release).Name("Release");
             Map(m => m.Description).Name("Description");
         }

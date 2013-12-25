@@ -5,10 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 
+using Renderly;
 using Renderly.Models;
+using Renderly.Models.Csv;
 using Renderly.Controllers;
 using Renderly.Imaging;
-using Renderly.Views;
+using Renderly.Reporting;
+using Renderly.Utils;
 
 using ManyConsole;
 
@@ -56,68 +59,73 @@ namespace RenderlyApp.Commands
 
         public override int Run(string[] remainingArguments)
         {
-            var model = new CsvModel(DataSource);
+            var fileManager = new RenderlyNativeFileManager();
 
-            IEnumerable<TestCase> testCases;
+            var stream = new FileStream(DataSource, FileMode.Open, FileAccess.Read);
+            using (var model = new CsvModel(stream, fileManager))
+            {
 
-            if (!Dates.Any() && !Releases.Any() && !TestIds.Any() && !TestTypes.Any())
-            {
-                testCases = model.GetTestCases();
-            }
-            else
-            {
-                var predicate = PredicateBuilder.False<TestCase>();
-                foreach (var d in Dates)
+                IEnumerable<TestCase> testCases;
+
+                if (!Dates.Any() && !Releases.Any() && !TestIds.Any() && !TestTypes.Any())
                 {
-                    predicate = predicate.Or(x => x.DateAdded.Date == d.Date);
+                    testCases = model.GetTestCases();
+                }
+                else
+                {
+                    var predicate = PredicateBuilder.False<TestCase>();
+                    foreach (var d in Dates)
+                    {
+                        predicate = predicate.Or(x => x.DateAdded.Date == d.Date);
+                    }
+
+                    foreach (var r in Releases)
+                    {
+                        predicate = predicate.Or(x => x.Release == r);
+                    }
+
+                    foreach (var t in TestIds)
+                    {
+                        predicate = predicate.Or(x => x.TestId == t);
+                    }
+
+                    foreach (var t in TestTypes)
+                    {
+                        predicate = predicate.Or(x => x.Type == t);
+                    }
+
+                    testCases = model.GetTestCases(predicate.Compile());
                 }
 
-                foreach (var r in Releases)
+                var controller = new RenderingController(new ExhaustiveTemplateComparer(Threshold), fileManager);
+                var directory = Directory.CreateDirectory(OutputDirectory);
+                var reportDir = directory.CreateSubdirectory(ReportName);
+                controller.RunTests(testCases, reportDir);
+                var reportDict = new Dictionary<string, object>();
+
+                reportDict.Add("reportname", ReportName);
+
+                //var failures = results.Where(r => !r.TestPassed);
+
+                //var failcsv = string.Join(",", failures.Select(x => x.TestId));
+                //reportDict.Add("failures", failcsv);
+
+                if (ReportAllResults)
                 {
-                    predicate = predicate.Or(x => x.Release == r);
+                    //reportDict.Add("result", results);
                 }
-
-                foreach(var t in TestIds)
+                else
                 {
-                    predicate = predicate.Or(x => x.TestId == t);
+                    //reportDict.Add("result", failures);
                 }
-
-                foreach(var t in TestTypes)
+                var view = new MustacheView();
+                var templateName = "rendering-results.mustache";
+                var path = Path.Combine(TemplateDirectory, templateName);
+                var html = view.GenerateReport(path, reportDict);
+                using (var writer = new StreamWriter(Path.Combine(reportDir.FullName, "report.html")))
                 {
-                    predicate = predicate.Or(x => x.Type == t);
+                    writer.WriteAsync(html);
                 }
-
-                testCases = model.GetTestCases(predicate.Compile());
-            }
-            
-            var controller = new RenderingController(new StandaloneImageComparator(Threshold));
-            var directory = Directory.CreateDirectory(OutputDirectory);
-            var reportDir = directory.CreateSubdirectory(ReportName);
-            var results = controller.RunTests(testCases, reportDir);
-            var reportDict = new Dictionary<string, object>();
-
-            reportDict.Add("reportname", ReportName);
-
-            var failures = results.Where(r => !r.TestPassed);
-
-            var failcsv = string.Join(",", failures.Select(x => x.TestId));
-            reportDict.Add("failures", failcsv);
-
-            if (ReportAllResults)
-            {
-                reportDict.Add("result", results);
-            }
-            else
-            {
-                reportDict.Add("result", failures);
-            }
-            var view = new View();
-            var templateName = "rendering-results.mustache";
-            var path = Path.Combine(TemplateDirectory, templateName);
-            var html = view.GenerateReport(path, reportDict);
-            using (var writer = new StreamWriter(Path.Combine(reportDir.FullName, "report.html")))
-            {
-                writer.WriteAsync(html);
             }
             return 0;
         }

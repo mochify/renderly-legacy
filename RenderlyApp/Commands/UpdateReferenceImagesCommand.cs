@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
+using Renderly;
 using Renderly.Models;
+using Renderly.Models.Csv;
+using Renderly.Utils;
 
 using System.Net;
 
@@ -28,19 +32,21 @@ namespace RenderlyApp.Commands
 
         public override int Run(string[] remainingArguments)
         {
-            var model = new CsvModel(ModelFile);
-
-            var predicate = PredicateBuilder.False<TestCase>();
-            foreach (var i in TestIds)
+            var fileManager = new RenderlyNativeFileManager();
+            var fstream = new FileStream(ModelFile, FileMode.Open, FileAccess.Read);
+            using (var model = new CsvModel(fstream, fileManager))
             {
-                predicate = predicate.Or(x => x.TestId == i);
-            }
+                var predicate = PredicateBuilder.False<TestCase>();
+                foreach (var i in TestIds)
+                {
+                    predicate = predicate.Or(x => x.TestId == i);
+                }
 
-            var updateTests = model.GetTestCases(predicate.Compile());
-            WebClient wc = new WebClient();
-            foreach (var t in updateTests)
-            {
-                wc.DownloadFile(new Uri(t.SourceLocation), t.ReferenceLocation);
+                var updateTests = model.GetTestCases(predicate.Compile());
+                foreach (var t in updateTests)
+                {
+                    fileManager.Fetch(t.SourceLocation, t.ReferenceLocation);
+                }
             }
 
             return 0;

@@ -8,14 +8,14 @@ using Nustache.Core;
 
 using Newtonsoft.Json;
 
-namespace Renderly.Views
+namespace Renderly.Reporting
 {
     /// <summary>
     /// This is a b
     /// </summary>
-    public class View
+    public class MustacheView
     {
-        public View()
+        public MustacheView()
         {
 
         }

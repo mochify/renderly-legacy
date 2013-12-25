@@ -10,16 +10,17 @@ using System.Drawing.Imaging;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-using Renderly.Models;
 using Renderly.Imaging;
+using Renderly.Utils;
 
 namespace Renderly.Controllers
 {
     public class RenderingController
     {
         private IImageComparer _imageComparer;
+        private IRenderlyFileManager _fileManager;
 
-        public RenderingController(IImageComparer comparer)
+        public RenderingController(IImageComparer comparer, IRenderlyFileManager fileManager)
         {
             if (comparer == null)
             {
@@ -28,38 +29,22 @@ namespace Renderly.Controllers
             _imageComparer = comparer;
         }
 
-        public IEnumerable<TestResult> RunTests(IEnumerable<TestCase> testCases, DirectoryInfo reportDir)
+        public void RunTests(IEnumerable<TestCase> testCases, DirectoryInfo reportDir)
         {
-            var results = new List<TestResult>();
-
-            var wc = new WebClient();
             foreach(var tc in testCases)
             {
                 var testId = tc.TestId;
-                var url = tc.SourceLocation;
+                var sourceImage = tc.SourceLocation;
                 var type = tc.Type;
                 var refImage = tc.ReferenceLocation;
 
                 var result = new TestResult().ForTestId(testId);
-                results.Add(result);
+                result.OriginalReferenceLocation = tc.ReferenceLocation;
 
-                var uri = new Uri(url);
-                byte[] imageBytes;
-                try
-                {
-                    imageBytes = wc.DownloadData(uri);
-                }
-                catch (Exception e)
-                {
-                    result.WithComment(e.Message);
-                    result.Passed(false);
-                    continue;
-                }
-
-                using(var ms = new MemoryStream(imageBytes))
-                using(var preview = new Bitmap(ms))
+                using(var sourceStream = _fileManager.Get(sourceImage))
+                using(var preview = new Bitmap(sourceStream))
                 using(var convertedPreview = new Bitmap(preview.Width, preview.Height, System.Drawing.Imaging.PixelFormat.Format24bppRgb))
-                using(var reference = new Bitmap(string.Format(@"{0}", refImage)))
+                using(var reference = new Bitmap(_fileManager.Get(refImage)))
                 {
                     using (var gr = Graphics.FromImage(convertedPreview))
                     {
@@ -69,7 +54,7 @@ namespace Renderly.Controllers
                     if (!_imageComparer.Matches(reference, convertedPreview))
                     {
                         result.TestPassed = false;
-                        result.WithComment("Source and Reference image do not match exactly.");
+                        result.WithComment("Source and Reference image do not match.");
                     }
                     else
                     {
@@ -78,26 +63,12 @@ namespace Renderly.Controllers
 
                     using (var diffImage = _imageComparer.GenerateDifferenceMap(reference, convertedPreview))
                     {
-                        // write all the files
-                        // TODO wrap each test run with a driver that writes the result files, rather
-                        // than give this class the responsibility of running and saving the output images
-                        // we don't want to keep the bitmap handles open because of memory limitations
-                        var imgDir = reportDir.CreateSubdirectory("images");
-                        var refPath = string.Format("{0}/{1}-reference.{2}", imgDir.Name, testId, Path.GetExtension(refImage));
-                        var prevPath = string.Format("{0}/{1}-generated.jpg", imgDir.Name, testId);
-                        var diffPath = string.Format("{0}/{1}-diff.jpg", imgDir.Name, testId);
-
-                        reference.Save(Path.Combine(reportDir.FullName, refPath));
-                        convertedPreview.Save(Path.Combine(reportDir.FullName, prevPath));
-                        diffImage.Save(Path.Combine(reportDir.FullName, diffPath));
-                        result.Reference = refPath;
-                        result.Preview = prevPath;
-                        result.Difference = diffPath;
+                        result.ReferenceImage = reference;
+                        result.SourceImage = convertedPreview;
+                        result.DifferenceImage = diffImage;
                     }
                 }
             }
-
-            return results;
         }
     }
 }

@@ -84,29 +84,33 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Drivers\IDriver.cs" />
-    <Compile Include="Drivers\RenderingDriver.cs" />
     <Compile Include="Imaging\AbstractImageComparer.cs" />
     <Compile Include="Imaging\IImageComparer.cs" />
     <Compile Include="Controllers\RenderingController.cs" />
-    <Compile Include="Models\CsvModel.cs" />
+    <Compile Include="Models\Csv\CsvModel.cs" />
+    <Compile Include="Models\IModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Imaging\StandaloneImageComparator.cs" />
-    <Compile Include="Models\TestCase.cs" />
-    <Compile Include="Models\TestCaseMap.cs" />
+    <Compile Include="Imaging\ExhaustiveTemplateComparer.cs" />
+    <Compile Include="TestCase.cs" />
+    <Compile Include="Models\Csv\TestCaseMap.cs" />
+    <Compile Include="Reporting\IReportService.cs" />
+    <Compile Include="Reporting\IReportView.cs" />
+    <Compile Include="Reporting\ReportService.cs" />
+    <Compile Include="Reporting\ReportServiceConfiguration.cs" />
     <Compile Include="TestResult.cs" />
+    <Compile Include="Utils\IRenderlyFileManager.cs" />
+    <Compile Include="Utils\RenderlyNativeFileManager.cs" />
     <Compile Include="Utils\ShellTestCase.cs" />
     <Compile Include="Utils\ShellTestCaseMap.cs" />
     <Compile Include="Utils\ShellTestCsvModel.cs" />
     <Compile Include="Utils\TestCaseGenerator.cs" />
-    <Compile Include="Views\View.cs" />
+    <Compile Include="Reporting\MustacheView.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Configuration\" />
     <Folder Include="Templates\" />
   </ItemGroup>
   <ItemGroup>

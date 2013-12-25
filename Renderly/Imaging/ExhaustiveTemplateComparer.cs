@@ -9,9 +9,9 @@ using AForge.Imaging.Filters;
 
 namespace Renderly.Imaging
 {
-    public class StandaloneImageComparator : AbstractImageComparer
+    public class ExhaustiveTemplateComparer : AbstractImageComparer
     {
-        public StandaloneImageComparator(float threshold = 1.0f)
+        public ExhaustiveTemplateComparer(float threshold = 1.0f)
             : base(threshold)
         {
         }

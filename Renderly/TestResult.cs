@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+using System.Drawing;
+
 namespace Renderly
 {
     public class TestResult
@@ -11,9 +13,10 @@ namespace Renderly
         private IList<string> _comments = new List<string>();
         public int TestId { get; set; }
         public bool TestPassed { get; set; }
-        public string Reference { get; set; }
-        public string Preview { get; set; }
-        public string Difference { get; set; }
+        public string OriginalReferenceLocation { get; set; }
+        public Image ReferenceImage { get; set; }
+        public Image SourceImage { get; set; }
+        public Image DifferenceImage { get; set; }
         public IEnumerable<string> Comments
         {
             get { return _comments; }
