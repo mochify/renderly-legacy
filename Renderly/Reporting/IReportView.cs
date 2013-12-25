@@ -10,7 +10,8 @@ namespace Renderly.Reporting
     /// This is the base interface for the various views that can be used
     /// to generate the resulting report.
     /// </summary>
-    interface IReportView
+    public interface IReportView
     {
+        string GenerateTemplate(string template, IDictionary<string, object> mapper);
     }
 }

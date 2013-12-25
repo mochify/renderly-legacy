@@ -32,7 +32,7 @@ namespace RenderlyApp.Commands
 
         public override int Run(string[] remainingArguments)
         {
-            var fileManager = new RenderlyNativeFileManager();
+            var fileManager = new RenderlyNativeAssetManager();
             var fstream = new FileStream(ModelFile, FileMode.Open, FileAccess.Read);
             using (var model = new CsvModel(fstream, fileManager))
             {

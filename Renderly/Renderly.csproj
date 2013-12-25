@@ -98,8 +98,8 @@
     <Compile Include="Reporting\ReportService.cs" />
     <Compile Include="Reporting\ReportServiceConfiguration.cs" />
     <Compile Include="TestResult.cs" />
-    <Compile Include="Utils\IRenderlyFileManager.cs" />
-    <Compile Include="Utils\RenderlyNativeFileManager.cs" />
+    <Compile Include="Utils\IRenderlyAssetManager.cs" />
+    <Compile Include="Utils\RenderlyNativeAssetManager.cs" />
     <Compile Include="Utils\ShellTestCase.cs" />
     <Compile Include="Utils\ShellTestCaseMap.cs" />
     <Compile Include="Utils\ShellTestCsvModel.cs" />

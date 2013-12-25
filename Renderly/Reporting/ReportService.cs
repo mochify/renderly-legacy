@@ -15,7 +15,7 @@ namespace Renderly.Reporting
     public class ReportService : IReportService
     {
         IList<TestResult> _results;
-        IRenderlyFileManager _assetManager;
+        IRenderlyAssetManager _assetManager;
         private readonly ReportServiceConfiguration _configuration;
 
         public ReportServiceConfiguration Configuration
@@ -23,7 +23,7 @@ namespace Renderly.Reporting
             get { return _configuration; }
         }
 
-        public ReportService(IRenderlyFileManager assetManager, ReportServiceConfiguration config)
+        public ReportService(IRenderlyAssetManager assetManager, ReportServiceConfiguration config)
         {
             _assetManager = assetManager;
             _configuration = config;
@@ -31,7 +31,7 @@ namespace Renderly.Reporting
         }
 
 
-        public ReportService(IRenderlyFileManager assetManager)
+        public ReportService(IRenderlyAssetManager assetManager)
             : this(assetManager, new ReportServiceConfiguration())
         {
         
@@ -39,8 +39,8 @@ namespace Renderly.Reporting
 
         /// <summary>
         /// Add a test result to use for the final report.
-        /// Note that this class will not assume any ownership for
-        /// images that are passed in the TestResult object.
+        /// Note that passing in a TestResult does not transfer ownership
+        /// of the internal bitmaps to me.
         /// </summary>
         /// <param name="tr"></param>
         public void AddResult(TestResult tr)
@@ -48,9 +48,15 @@ namespace Renderly.Reporting
             if ((tr.TestPassed && Configuration.DisplaySuccesses)
                 || !tr.TestPassed)
             {
-                
                 _results.Add(tr);
             }
+            PersistAssets(tr);
+        }
+
+        private void CreateReportLayout()
+        {
+            _assetManager.CreateFolder(string.Join("/", Configuration.OutputDirectory,
+                Configuration.ReportName, "images"));
         }
 
         /// <summary>
@@ -61,8 +67,10 @@ namespace Renderly.Reporting
         /// <returns></returns>
         private dynamic PersistAssets(TestResult tr)
         {
+            CreateReportLayout();
+
             var images = new List<Tuple<Image, string>>();
-            
+
             var uuid = Guid.NewGuid().ToString("N");
             var sourcePath = string.Format("images/{0}-{1}-generated.jpg", tr.TestId, uuid);
             images.Add(Tuple.Create(tr.SourceImage, sourcePath));
@@ -83,14 +91,14 @@ namespace Renderly.Reporting
 
             foreach (var image in images)
             {
-                using(var ms = new MemoryStream())
+                using (var ms = new MemoryStream())
                 {
                     image.Item1.Save(ms, ImageFormat.Jpeg);
-                    _assetManager.Save(ms, image.Item2);
+                    _assetManager.Save(ms, string.Join("/", Configuration.OutputDirectory, image.Item2));
                 }
             }
-
             return new { Reference = referencePath, Source = sourcePath, Diff = diffPath };
+ 
         }
 
         private string GenerateFileName(string subdir, object identifier, object extension)
@@ -101,6 +109,19 @@ namespace Renderly.Reporting
 
         public bool GenerateReport()
         {
+            var defaultTemplate = "template.rend";
+            using (var s = _assetManager.Get(Path.Combine(Configuration.TemplateDirectory, defaultTemplate)))
+            using (var sr = new StreamReader(s))
+            {
+                var reportDict = new Dictionary<string, object>();
+                reportDict.Add("reportname", Configuration.ReportName);
+                reportDict.Add("result", _results);
+                var template = sr.ReadToEnd();
+                var output = Configuration.ReportView.GenerateTemplate(template, reportDict);
+                var outFile = Path.Combine(Configuration.OutputDirectory, "report.html");
+                _assetManager.Save(output, outFile);
+            }
+
             return true;
         }
     }

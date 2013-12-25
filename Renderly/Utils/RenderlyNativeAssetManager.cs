@@ -12,7 +12,7 @@ namespace Renderly.Utils
     /// <summary>
     /// This class interacts with the file system/native system to get files.
     /// </summary>
-    public class RenderlyNativeFileManager : IRenderlyFileManager
+    public class RenderlyNativeAssetManager : IRenderlyAssetManager
     {
         public Stream Get(string path)
         {
@@ -48,6 +48,16 @@ namespace Renderly.Utils
             {
                 file.CopyTo(ostream);
             }
+        }
+
+        public void Save(string contents, string savePath)
+        {
+            File.WriteAllText(savePath, contents);
+        }
+
+        public void CreateFolder(string path)
+        {
+            Directory.CreateDirectory(path);
         }
     }
 }

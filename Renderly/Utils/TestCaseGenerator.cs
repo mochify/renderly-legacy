@@ -14,9 +14,9 @@ namespace Renderly.Utils
 {
     public class TestCaseGenerator
     {
-        private IRenderlyFileManager _fileManager;
+        private IRenderlyAssetManager _fileManager;
 
-        public TestCaseGenerator(IRenderlyFileManager fileManager)
+        public TestCaseGenerator(IRenderlyAssetManager fileManager)
         {
             _fileManager = fileManager;
         }

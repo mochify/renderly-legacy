@@ -50,7 +50,7 @@ namespace RenderlyApp.Commands
             }
 
             var csvStream = new FileStream(file, FileMode.Open, FileAccess.ReadWrite);
-            var fileManager = new RenderlyNativeFileManager();
+            var fileManager = new RenderlyNativeAssetManager();
 
             using (var model = new CsvModel(csvStream, fileManager))
             {

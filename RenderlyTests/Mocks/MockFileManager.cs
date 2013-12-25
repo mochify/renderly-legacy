@@ -10,7 +10,7 @@ using Renderly.Utils;
 
 namespace RenderlyTests.Mocks
 {
-    public class MockFileManager : IRenderlyFileManager
+    public class MockFileManager : IRenderlyAssetManager
     {
         private Dictionary<string, byte[]> _pretendFileSystem;
 
@@ -47,5 +47,14 @@ namespace RenderlyTests.Mocks
             }
         }
 
+        public void Save(string file, string savePath)
+        {
+            return;
+        }
+
+        public void CreateFolder(string folderPath)
+        {
+            return;
+        }
     }
 }

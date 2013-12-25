@@ -11,6 +11,9 @@ namespace Renderly.Reporting
         private bool _copyReferenceImages;
         private bool _reportSuccesses;
         private string _outputPath;
+        private string _reportName;
+        private string _templateDirectory;
+        private IReportView _view;
 
         public bool CopyReferenceImages
         {
@@ -28,6 +31,24 @@ namespace Renderly.Reporting
         {
             get { return _outputPath; }
             set { _outputPath = value; }
+        }
+
+        public string ReportName
+        {
+            get { return _reportName; }
+            set { _reportName = value; }
+        }
+
+        public IReportView ReportView
+        {
+            get { return _view; }
+            set { _view = value; }
+        }
+
+        public string TemplateDirectory
+        {
+            get { return _templateDirectory; }
+            set { _templateDirectory = value; }
         }
     }
 }

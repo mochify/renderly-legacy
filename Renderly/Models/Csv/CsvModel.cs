@@ -19,13 +19,13 @@ namespace Renderly.Models.Csv
         private bool _disposed;
         private IList<TestCase> _data;
         private Stream _csvStream;
-        private IRenderlyFileManager _fileManager;
+        private IRenderlyAssetManager _fileManager;
 
         /// <summary>
         /// Create a CsvModel with a stream to read and write to.
         /// </summary>
         /// <param name="csvStream">A stream that contains CSV data to into the model.</param>
-        public CsvModel(Stream csvStream, IRenderlyFileManager fileManager)
+        public CsvModel(Stream csvStream, IRenderlyAssetManager fileManager)
         {
             _fileManager = fileManager;
             _csvStream = csvStream;

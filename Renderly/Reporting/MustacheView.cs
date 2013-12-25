@@ -13,16 +13,16 @@ namespace Renderly.Reporting
     /// <summary>
     /// This is a b
     /// </summary>
-    public class MustacheView
+    public class MustacheView : IReportView
     {
         public MustacheView()
         {
 
         }
 
-        public string GenerateReport(string templatePath, IDictionary<string, object> dict)
+        public string GenerateTemplate(string template, IDictionary<string, object> dict)
         {
-            var html = Render.FileToString(templatePath, dict);
+            var html = Render.StringToString(template, dict);
             return html;
         }
     }

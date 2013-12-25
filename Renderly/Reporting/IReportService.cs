@@ -11,5 +11,8 @@ namespace Renderly.Reporting
     /// </summary>
     public interface IReportService
     {
+        void AddResult(TestResult tr);
+
+        bool GenerateReport();
     }
 }

@@ -25,6 +25,7 @@ namespace RenderlyApp.Commands
         private string OutputDirectory { get; set; }
         private string TemplateDirectory { get; set; }
         private bool ReportAllResults { get; set; }
+        private bool CopyReferenceImages { get; set; }
         private float Threshold { get; set; }
         private IEnumerable<DateTime> Dates { get; set; }
         private IEnumerable<string> Releases { get; set; }
@@ -47,6 +48,8 @@ namespace RenderlyApp.Commands
                 x => Threshold = float.Parse(x) / 100.0f);
             HasOption("showall", "Show all results in report (including successes). By default, only failures are shown.",
                 x => ReportAllResults = x != null);
+            HasOption("copyref", "Copy reference images locally to report directory. Default false.",
+                x => CopyReferenceImages = x != null);
             HasOption("t|testids=", "Comma-separated list of test IDs to run",
                 x => { TestIds = x.Split(',').Select(Int32.Parse); });
             HasOption("r|releases=", "Comma-separated list of releases to run",
@@ -59,12 +62,11 @@ namespace RenderlyApp.Commands
 
         public override int Run(string[] remainingArguments)
         {
-            var fileManager = new RenderlyNativeFileManager();
+            var fileManager = new RenderlyNativeAssetManager();
 
             var stream = new FileStream(DataSource, FileMode.Open, FileAccess.Read);
             using (var model = new CsvModel(stream, fileManager))
             {
-
                 IEnumerable<TestCase> testCases;
 
                 if (!Dates.Any() && !Releases.Any() && !TestIds.Any() && !TestTypes.Any())
@@ -97,10 +99,16 @@ namespace RenderlyApp.Commands
                     testCases = model.GetTestCases(predicate.Compile());
                 }
 
+                var reportConfiguration = new ReportServiceConfiguration();
+                reportConfiguration.CopyReferenceImages = CopyReferenceImages;
+                reportConfiguration.DisplaySuccesses = ReportAllResults;
+                reportConfiguration.OutputDirectory = OutputDirectory;
+                reportConfiguration.ReportView = new MustacheView();
+                var reportService = new ReportService(fileManager, reportConfiguration);
+
                 var controller = new RenderingController(new ExhaustiveTemplateComparer(Threshold), fileManager);
                 var directory = Directory.CreateDirectory(OutputDirectory);
-                var reportDir = directory.CreateSubdirectory(ReportName);
-                controller.RunTests(testCases, reportDir);
+                var results = controller.RunTests(testCases);
                 var reportDict = new Dictionary<string, object>();
 
                 reportDict.Add("reportname", ReportName);
@@ -118,14 +126,14 @@ namespace RenderlyApp.Commands
                 {
                     //reportDict.Add("result", failures);
                 }
-                var view = new MustacheView();
-                var templateName = "rendering-results.mustache";
-                var path = Path.Combine(TemplateDirectory, templateName);
-                var html = view.GenerateReport(path, reportDict);
-                using (var writer = new StreamWriter(Path.Combine(reportDir.FullName, "report.html")))
-                {
-                    writer.WriteAsync(html);
-                }
+                //var view = new MustacheView();
+                //var templateName = "rendering-results.mustache";
+                //var path = Path.Combine(TemplateDirectory, templateName);
+                //var html = view.GenerateReport(path, reportDict);
+                //using (var writer = new StreamWriter(Path.Combine(reportDir.FullName, "report.html")))
+                //{
+                //    writer.WriteAsync(html);
+                //}
             }
             return 0;
         }
