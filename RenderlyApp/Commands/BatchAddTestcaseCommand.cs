@@ -7,6 +7,7 @@ using System.IO;
 
 using ManyConsole;
 using Renderly.Models;
+using Renderly.Models.Csv;
 using Renderly.Utils;
 
 namespace RenderlyApp.Commands
@@ -19,43 +20,47 @@ namespace RenderlyApp.Commands
     /// - release
     /// - description (optional, leave blank if you want)
     /// </summary>
-    public class BatchAddTestcaseCommand : ConsoleCommand
+    public class BatchAddTestCaseCommand : ConsoleCommand
     {
         public string InputFile { get; set; }
         public string AppendTestFile { get; set; }
         public string OutputFile { get; set; }
-        public bool ModifyInPlace { get; set; }
 
-        public BatchAddTestcaseCommand()
+        public BatchAddTestCaseCommand()
         {
             IsCommand("batchadd", "Add test cases as a batch");
             HasRequiredOption("f|file=", "CSV file with the test cases to generate.", s => InputFile = s);
             HasRequiredOption("o|out=", "CSV file to output with test cases.", s => OutputFile = s);
-            HasOption("a|append=", "Test Cases to append to", s => AppendTestFile = s);
+            HasOption("a|append=", "Test Case file to append to", s => AppendTestFile = s);
         }
-
 
         public override int Run(string[] remainingArguments)
         {
-            var inputCsvFile = OutputFile;
+            Console.WriteLine("You are generating tests from {0}", InputFile);
+            Console.WriteLine("You are writing out to {0}", OutputFile);
+
             if (string.IsNullOrWhiteSpace(AppendTestFile))
             {
                 Console.WriteLine("Not appending to anything.");
             }
             else
             {
-                Console.WriteLine("Appending to {0}", AppendTestFile);
-                inputCsvFile = AppendTestFile;
+                Console.WriteLine("Appending to {0}.", AppendTestFile);
+                File.Copy(AppendTestFile, OutputFile);
             }
 
-            Console.WriteLine("You are generating tests from {0}", InputFile);
-            Console.WriteLine("You are writing out to {0}", OutputFile);
+            var csvStream = new FileStream(OutputFile, FileMode.Create, FileAccess.ReadWrite);
+            var shellFile = new FileStream(InputFile, FileMode.Open, FileAccess.ReadWrite);
+            var shellModel = new ShellTestCsvModel(shellFile);
+            var fileManager = new RenderlyNativeAssetManager();
 
-            var model = new CsvModel(inputCsvFile);
-            var shellModel = new ShellTestCsvModel(InputFile);
-            model.GenerateTestCases(shellModel.GetTestCases());
-            model.Serialize(OutputFile);
-
+            using (var model = new CsvModel(csvStream, fileManager))
+            {
+                var generator = new TestCaseGenerator(fileManager);
+                model.AddTestCases(generator.GenerateTestCases(shellModel.GetTestCases()));
+                model.Save();
+            }
+            
             return 0;
         }
     }

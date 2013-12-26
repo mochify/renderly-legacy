@@ -10,7 +10,7 @@ namespace Renderly.Imaging
 {
     public abstract class AbstractImageComparer : IImageComparer
     {
-        private float _threshold = 1.0f;
+        private float _threshold;
         public float Threshold
         {
             get { return _threshold; }

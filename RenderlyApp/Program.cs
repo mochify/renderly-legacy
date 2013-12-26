@@ -6,11 +6,8 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Reflection;
 
-using Renderly.Drivers;
 using Renderly.Imaging;
 using Renderly.Models;
-using Renderly.Views;
-using Renderly.Controllers;
 using RenderlyApp.Commands;
 using ManyConsole;
 
@@ -28,7 +25,7 @@ namespace RenderlyApp
             var builder = new ContainerBuilder();
 
             builder.RegisterAssemblyTypes(programAssembly).AsImplementedInterfaces();
-            builder.RegisterType<StandaloneImageComparator>().As<IImageComparer>();
+            builder.RegisterType<ExhaustiveTemplateComparer>().As<IImageComparer>();
 
             return builder;
         }
