@@ -39,12 +39,12 @@ namespace Renderly.Utils
         {
             // we have to do something to obtain the reference image
             // and save it to the 'reference' location
-
-            // TODO BUG make it copy the file somewhere!
+            string copiedName = _fileManager.FetchToRandomFilename(shell.ReferenceLocation, shell.ReferenceSavePath);
 
             var tc = new TestCase
             {
                 SourceLocation = shell.ReferenceLocation,
+                ReferenceLocation = Path.Combine(shell.ReferenceSavePath, copiedName),
                 Type = shell.Type,
                 Release = shell.Release,
                 Description = shell.Description,

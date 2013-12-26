@@ -38,13 +38,14 @@ namespace RenderlyApp.Commands
             Releases = Enumerable.Empty<string>();
             TestIds = Enumerable.Empty<int>();
             TestTypes = Enumerable.Empty<string>();
+            Threshold = 1.0f;
 
             IsCommand("run", "Run a rendering job");
             HasRequiredOption("f|file=", "The model to get test cases from.", x => DataSource = x);
             HasRequiredOption("n|name=", "The name of the report to generate", x => ReportName = x);
             HasRequiredOption("o|outdir=", "The directory to generate the report in", x => OutputDirectory = x);
             HasRequiredOption("m|templatedir=", "The directory to get templates for report generation", x => TemplateDirectory = x);
-            HasOption("threshold=", "Threshold value to configure how aggressive image comparison is (0-100). 100 is exact match.",
+            HasOption("threshold=", "Threshold value to configure how aggressive image comparison is (0-100). 100 is exact match. Defaults to 100.",
                 x => Threshold = float.Parse(x) / 100.0f);
             HasOption("showall", "Show all results in report (including successes). By default, only failures are shown.",
                 x => ReportAllResults = x != null);
@@ -62,6 +63,12 @@ namespace RenderlyApp.Commands
 
         public override int Run(string[] remainingArguments)
         {
+            // save people from aggressive thresholding.
+            if (Threshold > 100.0f)
+            {
+                Threshold = 1.0f;
+            }
+
             var fileManager = new RenderlyNativeAssetManager();
 
             var stream = new FileStream(DataSource, FileMode.Open, FileAccess.Read);

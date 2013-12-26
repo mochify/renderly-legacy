@@ -35,6 +35,9 @@ namespace Renderly.Reporting
         }
 
         IList<ReportResult> _results;
+        private int _failedTests;
+        private int _passedTests;
+
         IRenderlyAssetManager _assetManager;
         private readonly ReportServiceConfiguration _configuration;
 
@@ -65,6 +68,15 @@ namespace Renderly.Reporting
         /// <param name="tr"></param>
         public void AddResult(TestResult tr)
         {
+            if (tr.TestPassed) 
+            {
+                ++_passedTests;
+            }
+            else
+            {
+                ++_failedTests;
+            }
+
             if ((tr.TestPassed && Configuration.DisplaySuccesses)
                 || !tr.TestPassed)
             {
@@ -112,14 +124,17 @@ namespace Renderly.Reporting
 
             var images = new List<Tuple<Image, string>>();
 
+            string fileExtension = Configuration.OutputImageType == "png" ? "png" : "jpg";
+            ImageFormat format = Configuration.OutputImageType == "png" ? ImageFormat.Png : ImageFormat.Jpeg;
+
             var uuid = Guid.NewGuid().ToString("N");
-            var sourcePath = string.Format("images/{1}-{2}-generated.jpg", Configuration.ReportName, tr.TestId, uuid);
+            var sourcePath = string.Format("images/{0}-{1}-generated.{2}", tr.TestId, uuid, fileExtension);
             images.Add(Tuple.Create(tr.SourceImage, sourcePath));
 
-            var diffPath = string.Format("images/{1}-{2}-diff.jpg", Configuration.ReportName, tr.TestId, uuid);
+            var diffPath = string.Format("images/{0}-{1}-diff.{2}", tr.TestId, uuid, fileExtension);
             images.Add(Tuple.Create(tr.DifferenceImage, diffPath));
 
-            var referencePath = string.Format("images/{1}-{2}-reference.jpg", Configuration.ReportName, tr.TestId, uuid);
+            var referencePath = string.Format("images/{0}-{1}-reference.{2}", tr.TestId, uuid, fileExtension);
 
             if (Configuration.CopyReferenceImages)
             {
@@ -132,7 +147,7 @@ namespace Renderly.Reporting
 
             foreach (var image in images)
             {
-                image.Item1.Save(Path.Combine(Configuration.OutputDirectory, Configuration.ReportName, image.Item2));
+                image.Item1.Save(Path.Combine(Configuration.OutputDirectory, Configuration.ReportName, image.Item2), format);
                 //using (var ms = new MemoryStream())
                 //{
                 //    image.Item1.Save(ms, ImageFormat.Jpeg);
@@ -159,9 +174,15 @@ namespace Renderly.Reporting
             using (var s = _assetManager.Get(Path.Combine(Configuration.TemplateDirectory, defaultTemplate)))
             using (var sr = new StreamReader(s))
             {
+                var failedIter = _results.Where(x => !x.TestPassed).Select(x => x.TestId);
+                var failedString = string.Join(",", failedIter);
+
                 var reportDict = new Dictionary<string, object>();
                 reportDict.Add("reportname", Configuration.ReportName);
                 reportDict.Add("result", _results);
+                reportDict.Add("passed", _passedTests);
+                reportDict.Add("failed", _failedTests);
+                reportDict.Add("failures", failedString);
                 var template = sr.ReadToEnd();
                 var output = Configuration.ReportView.GenerateTemplate(template, reportDict);
                 var outFile = Path.Combine(Configuration.OutputDirectory, Configuration.ReportName, "report.html");

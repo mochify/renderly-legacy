@@ -48,35 +48,33 @@ namespace Renderly.Controllers
             var result = new TestResult().ForTestId(testId);
             result.OriginalReferenceLocation = tc.ReferenceLocation;
 
-            using (var sourceStream = _fileManager.Get(sourceImage))
-            using (var preview = new Bitmap(sourceStream))
+            using (var preview = new Bitmap(_fileManager.Get(sourceImage)))
+            using (var reference = new Bitmap(_fileManager.Get(refImage)))
             {
-                var convertedPreview = new Bitmap(preview.Width, preview.Height, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
-                var reference = new Bitmap(_fileManager.Get(refImage));
-
-                using (var gr = Graphics.FromImage(convertedPreview))
-                {
-                    gr.DrawImage(preview, new Rectangle(0, 0, preview.Width, preview.Height));
-                }
-
-                if (!_imageComparer.Matches(reference, convertedPreview))
+                if (!_imageComparer.Matches(reference, preview))
                 {
                     result.TestPassed = false;
-                    result.WithComment("Source and Reference image do not match.");
+                    result.WithComment("Source and Reference image do not match according to threshold.");
                 }
                 else
                 {
                     result.TestPassed = true;
+                    result.WithComment("Passed");
                 }
 
-                var diffImage = _imageComparer.GenerateDifferenceMap(reference, convertedPreview);
+                var diffImage = _imageComparer.GenerateDifferenceMap(reference, preview);
 
-                result.ReferenceImage = reference;
-                result.SourceImage = convertedPreview;
+                // Because Bitmaps need their streams kept open to be useful, and
+                // I'd rather not pass the streams along so that I can manage them,
+                // just create a copy of the reference and preview bitmaps here
+
+                result.ReferenceImage = ImageUtils.CopyBitmap(reference, reference.PixelFormat);
+                result.SourceImage = ImageUtils.CopyBitmap(preview, preview.PixelFormat);
                 result.DifferenceImage = diffImage;
             }
 
             return result;
         }
+
     }
 }

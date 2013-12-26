@@ -37,6 +37,11 @@ namespace RenderlyTests.Mocks
 
         }
 
+        public string FetchToRandomFilename(string uri, string directory)
+        {
+            return "";
+        }
+
         public void Save(Stream file, string savePath)
         {
             file.Position = 0;

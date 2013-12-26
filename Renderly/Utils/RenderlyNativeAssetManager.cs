@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 
 using System.Net;
+using Microsoft.Win32;
 
 namespace Renderly.Utils
 {
@@ -42,11 +43,38 @@ namespace Renderly.Utils
             wc.DownloadFile(fetchPath, savePath);
         }
 
+        public string FetchToRandomFilename(string fetchUri, string outputDirectory)
+        {
+            Uri uri = new Uri(fetchUri);
+
+            string randomName = Guid.NewGuid().ToString("N");
+
+            if (uri.IsFile || uri.IsUnc)
+            {
+                randomName = string.Format("{0}{1}", randomName, Path.GetExtension(uri.AbsoluteUri));
+                File.Copy(uri.LocalPath, Path.Combine(outputDirectory, randomName));
+            }
+            else
+            {
+                // I'm assuming that you're not going to be giving me non file/non-HTTP stuff here,
+                // since I'm going to use a download now.
+                HttpWebRequest request = WebRequest.Create(uri) as HttpWebRequest;
+                using (var response = request.GetResponse())
+                {
+                    var contentType = response.ContentType;
+                    randomName = string.Format("{0}{1}", randomName, GetRegisteredExtension(contentType));
+                    Save(response.GetResponseStream(), Path.Combine(outputDirectory, randomName));
+                }
+            }
+
+            return randomName;
+            
+        }
+
         public void Save(Stream file, string savePath)
         {
             using(var ostream = new FileStream(savePath, FileMode.Create, FileAccess.Write))
             {
-                Console.WriteLine("Source Length: {0}", ostream.Length);
                 file.CopyTo(ostream);
             }
         }
@@ -59,6 +87,13 @@ namespace Renderly.Utils
         public void CreateFolder(string path)
         {
             Directory.CreateDirectory(path);
+        }
+
+        private string GetRegisteredExtension(string type)
+        {
+            RegistryKey key = Registry.ClassesRoot.OpenSubKey(@"MIME\Database\Content Type\" + type, false);
+            var value = key != null ? key.GetValue("Extension", null) : null;
+            return value != null ? value.ToString() : "";
         }
     }
 }

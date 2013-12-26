@@ -14,6 +14,7 @@ namespace Renderly.Reporting
         private string _reportName;
         private string _templateDirectory;
         private IReportView _view;
+        private string _outputImageType = "jpg";
 
         public bool CopyReferenceImages
         {
@@ -49,6 +50,12 @@ namespace Renderly.Reporting
         {
             get { return _templateDirectory; }
             set { _templateDirectory = value; }
+        }
+
+        public string OutputImageType
+        {
+            get { return _outputImageType; }
+            set { _outputImageType = value; }
         }
     }
 }

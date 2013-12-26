@@ -17,6 +17,8 @@ namespace Renderly.Utils
 
         void Save(string contents, string savePath);
 
+        string FetchToRandomFilename(string fetchUri, string saveDirectory);
+
         /// <summary>
         /// Create a folder, and all paths in the path that don't exist.
         /// </summary>

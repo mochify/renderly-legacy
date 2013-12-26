@@ -235,7 +235,6 @@ namespace RenderlyTests
                     var headerLine = reader.ReadLine();
                     Assert.AreEqual(string.Join(",", _header), headerLine);
                     var next = reader.ReadLine();
-                    Console.WriteLine(next);
                     var defaultDate = new DateTime();
 
                     // Because the test cases were empty to start,
