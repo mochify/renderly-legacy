@@ -52,8 +52,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Commands\BatchAddTestcaseCommand.cs" />
-    <Compile Include="Commands\DeleteTestcaseCommand.cs" />
+    <Compile Include="Commands\BatchAddTestCaseCommand.cs" />
+    <Compile Include="Commands\DeleteTestCaseCommand.cs" />
     <Compile Include="Commands\RunRenderingCommand.cs" />
     <Compile Include="Commands\UpdateReferenceImagesCommand.cs" />
     <Compile Include="PredicateBuilder.cs" />

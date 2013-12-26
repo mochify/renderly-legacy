@@ -10,7 +10,7 @@ using CsvHelper;
 using CsvHelper.TypeConversion;
 using CsvHelper.Configuration;
 
-namespace Renderly
+namespace Renderly.Models.Csv
 {
     class TestCaseMap : CsvClassMap<TestCase>
     {

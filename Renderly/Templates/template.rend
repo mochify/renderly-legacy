@@ -1,0 +1,39 @@
+<h1>{{reportname}}</h1>
+
+<div>
+    <h2>Counts</h2>
+    <p>Tests Passed: {{passed}}</p>
+    <p>Tests Failed: {{failed}}</p>
+</div>
+
+<div>
+    <h2>Failures</h2>
+    <p>{{failures}}</p>
+</div>
+
+<div>
+    <h2>Results</h2>
+    <table>
+    <tr>
+        <td>Test Case</td>
+        <td>Passed</td>
+        <td>Reference Image</td>
+        <td>Preview Image</td>
+        <td>Difference</td>
+        <td>Comments</td>
+    </tr>
+    {{#result}}
+        <tr>
+            <td>{{TestId}}</td>
+            <td>{{TestPassed}}</td>
+            <td><img src='{{ReferencePath}}'</td>
+            <td><img src='{{SourcePath}}'</td>
+            <td><img src='{{DifferencePath}}'</td>
+            <td>{{#Comments}}
+                <ul>{{.}}
+                {{/Comments}}
+            </td>
+        </tr>
+    {{/result}}
+    </table>
+</div>

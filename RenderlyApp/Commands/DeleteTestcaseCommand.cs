@@ -3,13 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 using ManyConsole;
+using Renderly;
 using Renderly.Models;
+using Renderly.Models.Csv;
+using Renderly.Utils;
 
 namespace RenderlyApp.Commands
 {
-    public class DeleteTestcaseCommand : ConsoleCommand
+    public class DeleteTestCaseCommand : ConsoleCommand
     {
         private string ModelFile { get; set; }
         private string OutputFile { get; set; }
@@ -17,7 +21,7 @@ namespace RenderlyApp.Commands
         private IEnumerable<string> Releases { get; set; }
         private IEnumerable<int> TestIds { get; set; }
 
-        public DeleteTestcaseCommand()
+        public DeleteTestCaseCommand()
         {
             Dates = Enumerable.Empty<DateTime>();
             Releases = Enumerable.Empty<string>();
@@ -38,36 +42,45 @@ namespace RenderlyApp.Commands
 
         public override int Run(string[] remainingArguments)
         {
-            var model = new CsvModel(ModelFile);
-
-            if (!Dates.Any() && !Releases.Any() && !TestIds.Any())
+            var file = ModelFile;
+            if (!string.IsNullOrWhiteSpace(OutputFile))
             {
-                Console.WriteLine("Nothing to do, please specify at least one of dates|releases|test ids");
+                File.Copy(ModelFile, OutputFile);
+                file = OutputFile;
             }
 
-            var predicate = PredicateBuilder.False<TestCase>();
+            var csvStream = new FileStream(file, FileMode.Open, FileAccess.ReadWrite);
+            var fileManager = new RenderlyNativeAssetManager();
 
-            foreach (var d in Dates)
+            using (var model = new CsvModel(csvStream, fileManager))
             {
-                predicate = predicate.Or(x => x.DateAdded.Date == d.Date);
+                if (!Dates.Any() && !Releases.Any() && !TestIds.Any())
+                {
+                    Console.WriteLine("Nothing to do, please specify at least one of dates|releases|test ids");
+                }
+
+                var predicate = PredicateBuilder.False<TestCase>();
+
+                foreach (var d in Dates)
+                {
+                    predicate = predicate.Or(x => x.DateAdded.Date == d.Date);
+                }
+
+                foreach (var s in Releases)
+                {
+                    predicate = predicate.Or(x => x.Release == s);
+                }
+
+                foreach (var t in TestIds)
+                {
+
+                    predicate = predicate.Or(x => x.TestId == t);
+                }
+
+                var deleted = model.Delete(predicate.Compile());
+                Console.WriteLine("Deleted {0} test cases from {1}", deleted, ModelFile);
+                model.Save();
             }
-
-            foreach (var s in Releases)
-            {
-                predicate = predicate.Or(x => x.Release == s);
-            }
-
-            foreach (var t in TestIds)
-            {
-
-                predicate = predicate.Or(x => x.TestId == t);
-            }
-
-
-            var deleted = model.Delete(predicate.Compile());
-            Console.WriteLine("Deleted {0} test cases from {1}", deleted, ModelFile);
-
-            model.Serialize(OutputFile);
 
             return 0;
         }
