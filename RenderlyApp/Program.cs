@@ -1,14 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
 using System.Reflection;
 
 using Renderly.Imaging;
-using Renderly.Models;
-using RenderlyApp.Commands;
 using ManyConsole;
 
 using Autofac;
