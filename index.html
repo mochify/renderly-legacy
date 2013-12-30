@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <title>Renderly by mochify</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>Renderly</h1>
+        <h2>A non-proprietary version of my Rendering automation library/toolkit.</h2>
+
+        <section id="downloads">
+          <a href="https://github.com/mochify/renderly/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/mochify/renderly/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/mochify/renderly" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <p>So Renderly has these main responsibilities:</p>
+
+<ul>
+<li>Reads data in from file/database for list of test cases to run</li>
+<li>Hits the URLs, grabs the generated render, compares them with a reference image</li>
+<li>Generates a report of the URLs that failed, and for what reason(s) they failed</li>
+</ul><p>A test case specifies the following:</p>
+
+<ol>
+<li>URL to hit for a preview</li>
+<li>A location of the reference image (currently a UNC path somewhere)</li>
+<li>The type of test (matching, live preview, dip, blah blah, this is only for processing purposes)</li>
+</ol><p>The data model will be:</p>
+
+<ul>
+<li>Test Case Number (int, PK)</li>
+<li>Test Type (string)</li>
+<li>URL to render (URL/string/blah)</li>
+<li>Reference location (string, two parts - TypeOfLocation:Location)</li>
+<li>Date Added (date)</li>
+<li>Date Modified (date)</li>
+<li>Release Added (string)</li>
+<li>Description (optional, string)</li>
+</ul><p>So the flow of the program:</p>
+
+<ul>
+<li>Start the engine</li>
+<li>Pass in arguments to allow you to specify certain things
+
+<ul>
+<li>Test number(s) to test</li>
+<li>Types of test(s) to run (like running all things of type 'lp')</li>
+</ul>
+</li>
+<li>Read in all the tests necessary (numbers, types, everything)</li>
+<li>Process all the things and do all the comparisons</li>
+<li>Generate a report with failures WITH NUSTACHE</li>
+</ul>
+      </section>
+    </div>
+
+    
+  </body>
+</html>
