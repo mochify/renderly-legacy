@@ -1,14 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-using Renderly.Models;
-
-using CsvHelper;
-using CsvHelper.TypeConversion;
-using CsvHelper.Configuration;
+﻿using CsvHelper.Configuration;
 
 namespace Renderly.Models.Csv
 {
