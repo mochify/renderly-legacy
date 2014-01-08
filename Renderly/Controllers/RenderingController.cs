@@ -5,6 +5,8 @@ using System.Drawing;
 using Renderly.Imaging;
 using Renderly.Utils;
 
+using System.IO;
+
 namespace Renderly.Controllers
 {
     public class RenderingController
@@ -39,30 +41,42 @@ namespace Renderly.Controllers
 
             var result = new TestResult().ForTestId(testId);
             result.OriginalReferenceLocation = tc.ReferenceLocation;
-
-            using (var preview = new Bitmap(_fileManager.Get(sourceImage)))
-            using (var reference = new Bitmap(_fileManager.Get(refImage)))
+            try
             {
-                if (!_imageComparer.Matches(reference, preview))
+                using (var preview = new Bitmap(_fileManager.Get(sourceImage)))
+                using (var reference = new Bitmap(_fileManager.Get(refImage)))
                 {
-                    result.TestPassed = false;
-                    result.WithComment("Source and Reference image do not match according to threshold.");
+                    if (!_imageComparer.Matches(reference, preview))
+                    {
+                        result.TestPassed = false;
+                        result.WithComment("Source and Reference image do not match according to threshold.");
+                    }
+                    else
+                    {
+                        result.TestPassed = true;
+                        result.WithComment("Passed");
+                    }
+
+                    var diffImage = _imageComparer.GenerateDifferenceMap(reference, preview);
+
+                    // Because Bitmaps need their streams kept open to be useful, and
+                    // I'd rather not pass the streams along so that I can manage them,
+                    // just create a copy of the reference and preview bitmaps here
+
+                    result.ReferenceImage = ImageUtils.CopyBitmap(reference, reference.PixelFormat);
+                    result.SourceImage = ImageUtils.CopyBitmap(preview, preview.PixelFormat);
+                    result.DifferenceImage = diffImage;
                 }
-                else
+            }
+            catch (IOException e)
+            {
+                result.TestPassed = false;
+                result.WithComment(e.Message);
+
+                if (e.InnerException != null)
                 {
-                    result.TestPassed = true;
-                    result.WithComment("Passed");
+                    result.WithComment(e.InnerException.Message);
                 }
-
-                var diffImage = _imageComparer.GenerateDifferenceMap(reference, preview);
-
-                // Because Bitmaps need their streams kept open to be useful, and
-                // I'd rather not pass the streams along so that I can manage them,
-                // just create a copy of the reference and preview bitmaps here
-
-                result.ReferenceImage = ImageUtils.CopyBitmap(reference, reference.PixelFormat);
-                result.SourceImage = ImageUtils.CopyBitmap(preview, preview.PixelFormat);
-                result.DifferenceImage = diffImage;
             }
 
             return result;

@@ -145,7 +145,10 @@ namespace Renderly.Reporting
 
             foreach (var image in images)
             {
-                image.Item1.Save(Path.Combine(Configuration.OutputDirectory, Configuration.ReportName, image.Item2), format);
+                if (image.Item1 != null && !string.IsNullOrWhiteSpace(image.Item2))
+                {
+                    image.Item1.Save(Path.Combine(Configuration.OutputDirectory, Configuration.ReportName, image.Item2), format);
+                }
                 //using (var ms = new MemoryStream())
                 //{
                 //    image.Item1.Save(ms, ImageFormat.Jpeg);
