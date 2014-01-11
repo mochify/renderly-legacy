@@ -36,12 +36,13 @@ namespace RenderlyApp.Commands
             TestIds = Enumerable.Empty<int>();
             TestTypes = Enumerable.Empty<string>();
             Threshold = 1.0f;
+            ReportName = string.Format("renderly-{0:yyyy-MM-dd_hh-mm-ss-tt}", DateTime.Now);
 
             IsCommand("run", "Run a rendering job");
             HasRequiredOption("f|file=", "The model to get test cases from.", x => DataSource = x);
-            HasRequiredOption("n|name=", "The name of the report to generate", x => ReportName = x);
             HasRequiredOption("o|outdir=", "The directory to generate the report in", x => OutputDirectory = x);
             HasRequiredOption("m|templatedir=", "The directory to get templates for report generation", x => TemplateDirectory = x);
+            HasOption("n|name=", "The name of the report to generate. Defaults to runtime of the app otherwise", x => ReportName = x);
             HasOption("threshold=", "Threshold value to configure how aggressive image comparison is (0-100). 100 is exact match. Defaults to 100.",
                 x => Threshold = float.Parse(x) / 100.0f);
             HasOption("showall", "Show all results in report (including successes). By default, only failures are shown.",
