@@ -49,6 +49,9 @@ namespace Renderly.Reporting
             _assetManager = assetManager;
             _configuration = config;
             _results = new List<ReportResult>();
+
+            // We have to create the location where the report and its assets will be stored
+            CreateReportLayout();
         }
 
 
@@ -118,7 +121,6 @@ namespace Renderly.Reporting
         /// <returns></returns>
         private dynamic PersistAssets(TestResult tr)
         {
-            CreateReportLayout();
 
             var images = new List<Tuple<Image, string>>();
 

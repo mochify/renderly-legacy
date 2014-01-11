@@ -54,6 +54,7 @@ namespace Renderly.Utils
 
         public string FetchToRandomFilename(string fetchUri, string outputDirectory)
         {
+            CreateFolder(outputDirectory);
             Uri uri = new Uri(fetchUri);
 
             string randomName = Guid.NewGuid().ToString("N");
