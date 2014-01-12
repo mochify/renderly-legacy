@@ -1,74 +1,228 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
-    <meta charset='utf-8'>
+    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
-    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
-
     <title>Renderly by mochify</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
   </head>
-
   <body>
-
-    <header>
-      <div class="container">
+    <div class="wrapper">
+      <header>
         <h1>Renderly</h1>
-        <h2>A non-proprietary version of my Rendering automation library/toolkit.</h2>
+        <p>A non-proprietary version of my Rendering automation library/toolkit.</p>
 
-        <section id="downloads">
-          <a href="https://github.com/mochify/renderly/zipball/master" class="btn">Download as .zip</a>
-          <a href="https://github.com/mochify/renderly/tarball/master" class="btn">Download as .tar.gz</a>
-          <a href="https://github.com/mochify/renderly" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
-        </section>
-      </div>
-    </header>
+        <p class="view"><a href="https://github.com/mochify/renderly">View the Project on GitHub <small>mochify/renderly</small></a></p>
 
-    <div class="container">
-      <section id="main_content">
-        <p>So Renderly has these main responsibilities:</p>
+
+        <ul>
+          <li><a href="https://github.com/mochify/renderly/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/mochify/renderly/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/mochify/renderly">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a name="renderly" class="anchor" href="#renderly"><span class="octicon octicon-link"></span></a>Renderly</h1>
+
+<p>Renderly is a .NET library and library for automated comparison of images. It is intended for use in environments where you want to periodically check generated images against a reference image to see if any changes have caused the images to render differently or incorrectly.</p>
+
+<h2>
+<a name="source-code-layout" class="anchor" href="#source-code-layout"><span class="octicon octicon-link"></span></a>Source Code Layout</h2>
+
+<p>The code is broken up into a few projects, described below.</p>
+
+<h3>
+<a name="renderly-1" class="anchor" href="#renderly-1"><span class="octicon octicon-link"></span></a>Renderly</h3>
+
+<p>This is the core library which provides the basic interfaces for building an application.</p>
+
+<h3>
+<a name="renderlyapp" class="anchor" href="#renderlyapp"><span class="octicon octicon-link"></span></a>RenderlyApp</h3>
+
+<p>This is a reference application built on top of Renderly that takes a CSV file with test cases, runs image comparisons against the test cases, and generates a report of results.</p>
+
+<h3>
+<a name="renderlytests" class="anchor" href="#renderlytests"><span class="octicon octicon-link"></span></a>RenderlyTests</h3>
+
+<p>This project has all the unit tests for the Renderly library.</p>
+
+<h2>
+<a name="documentation" class="anchor" href="#documentation"><span class="octicon octicon-link"></span></a>Documentation</h2>
+
+<p>Read the wiki!</p>
+
+<h2>
+<a name="build" class="anchor" href="#build"><span class="octicon octicon-link"></span></a>Build</h2>
+
+<p>You will need Visual Studio 2012 or Visual Studio 2013 to build. I assume the code should build fine in Visual Studio 2010, but it has not been tested with that version.</p>
+
+<p>I have not provided a build script yet, so right now you should open <code>Renderly</code> and <code>RenderlyApp</code> in a solution and rebuild.</p>
+
+<h2>
+<a name="running-renderlyapp" class="anchor" href="#running-renderlyapp"><span class="octicon octicon-link"></span></a>Running RenderlyApp</h2>
+
+<p>This applies to if you're using the included RenderlyApp. Running the <code>RenderlyApp.exe</code> without any arguments should produce the list of supported commands:</p>
+
+<pre><code>&gt; .\RenderlyApp.exe -h
+
+Available commands are:
+
+    batchadd    - Add test cases as a batch
+    deletetest  - Delete test cases (and their reference images) from a model
+    run         - Run a rendering job
+    updateref   - Update reference images for provides test cases.
+
+    help &lt;name&gt; - For help with one of the above commands
+</code></pre>
+
+<h3>
+<a name="batchadd" class="anchor" href="#batchadd"><span class="octicon octicon-link"></span></a><code>batchadd</code>
+</h3>
+
+<p>The <code>batchadd</code> command allows you to create a new test case file, or append test cases to an existing one. Note that if you append, it does not perform an in-place modification of the input file.</p>
+
+<p>The command takes the following arguments:</p>
+
+<pre><code> &gt; .\RenderlyApp.exe help batchadd
+
+'batchadd' - Add test cases as a batch
+
+Expected usage: RenderlyApp.exe batchadd &lt;options&gt;
+&lt;options&gt; available:
+-f, --file=VALUE           CSV file with the test cases to generate.
+-o, --out=VALUE            CSV file to output with test cases.
+-a, --append=VALUE         Test Case file to append to
+</code></pre>
+
+<p>The file you pass to the <code>-f</code> argument is a CSV file that should start with the following header:</p>
+
+<pre><code>Type,Reference Location,Reference Save Directory,Release,Description
+</code></pre>
 
 <ul>
-<li>Reads data in from file/database for list of test cases to run</li>
-<li>Hits the URLs, grabs the generated render, compares them with a reference image</li>
-<li>Generates a report of the URLs that failed, and for what reason(s) they failed</li>
-</ul><p>A test case specifies the following:</p>
+<li>The <code>Type</code> column is the type of test this is.</li>
+<li>The <code>Reference Location</code> column is a URI to the image where the image should be copied from. This image becomes the test case's reference image, and the location is where the test will obtain the image from in the future.</li>
+<li>
+<code>Reference Save Directory</code> is the directory where the reference image will be saved.</li>
+<li>
+<code>Release</code> is what software/version release this test was originally created for, or what version it should apply to. This is mostly a reference field in case you are curious about what version/release you were testing an image in.</li>
+<li>
+<code>Description</code> is a short comment about the test case. Only used for your reference.</li>
+</ul><h3>
+<a name="deletetest" class="anchor" href="#deletetest"><span class="octicon octicon-link"></span></a><code>deletetest</code>
+</h3>
 
-<ol>
-<li>URL to hit for a preview</li>
-<li>A location of the reference image (currently a UNC path somewhere)</li>
-<li>The type of test (matching, live preview, dip, blah blah, this is only for processing purposes)</li>
-</ol><p>The data model will be:</p>
+<p>The <code>deletetest</code> command allows you to delete a test case from a file.</p>
+
+<p>The command takes the following arguments:</p>
+
+<pre><code>&gt; .\RenderlyApp.exe help deletetest
+
+'deletetest' - Delete test cases (and their reference images) from a model
+
+Expected usage: RenderlyApp.exe deletetest &lt;options&gt;
+&lt;options&gt; available:
+  -f, --file=VALUE           Model file to delete test cases from.
+  -d, --dates=VALUE          Comma-separated list of dates to delete test
+                               cases for. MM-DD-YYYY format.
+  -r, --releases=VALUE       Comma-separated list of releases to delete test
+                               cases for
+  -t, --testids=VALUE        Comma-separated list of test IDs to delete
+  -o, --outfile=VALUE        File to save test cases to. If no file is
+                               specified, the input file is overwritten.
+</code></pre>
+
+<p>Options should be rather self-explanatory. You can specify multiple different parameters to erase from a test case file. Any reference images will also be deleted from their saved location, if possible (may not be possible due to permissions or other accessibility issues).</p>
+
+<h3>
+<a name="updateref" class="anchor" href="#updateref"><span class="octicon octicon-link"></span></a><code>updateref</code>
+</h3>
+
+<p>The <code>updateref</code> command lets you update test cases, making the application redownload reference images. This may be useful in case your images or rendering changes, and you want to update the reference image a test case uses.</p>
+
+<p>The command takes the following arguments:</p>
+
+<pre><code>&gt; .\RenderlyApp.exe help updateref
+
+'updateref' - Update reference images for provides test cases.
+
+Expected usage: RenderlyApp.exe updateref &lt;options&gt;
+&lt;options&gt; available:
+  -f, --file=VALUE           Model file to update test cases in.
+  -t, --testids=VALUE        Comma-separated list of test IDs to redownload
+                               reference images for.
+</code></pre>
+
+<h3>
+<a name="run" class="anchor" href="#run"><span class="octicon octicon-link"></span></a><code>run</code>
+</h3>
+
+<p>The <code>run</code> command lets you run a rendering and comparison test, using an input CSV file. A report will be generated detailing the results of the run.</p>
+
+<p>The command takes the following arguments:</p>
+
+<pre><code>&gt; .\RenderlyApp.exe help run
+
+'run' - Run a rendering job
+
+Expected usage: RenderlyApp.exe run &lt;options&gt;
+&lt;options&gt; available:
+  -f, --file=VALUE           The model to get test cases from.
+  -n, --name=VALUE           The name of the report to generate
+  -o, --outdir=VALUE         The directory to generate the report in
+  -m, --templatedir=VALUE    The directory to get templates for report
+                               generation
+      --threshold=VALUE      Threshold value to configure how aggressive
+                               image comparison is (0-100). 100 is exact match.
+                               Defaults to 100.
+      --showall              Show all results in report (including successes-
+                               ). By default, only failures are shown.
+      --copyref              Copy reference images locally to report
+                               directory. Default false.
+  -t, --testids=VALUE        Comma-separated list of test IDs to run
+  -r, --releases=VALUE       Comma-separated list of releases to run
+  -d, --dates=VALUE          Comma-separated list of dates to run. MM-DD-YYYY
+                               format. Runs for Date Added.
+  -y, --types=VALUE          Comma-separated list of types to run.
+</code></pre>
+
+<p>The CSV file you pass to the <code>-f</code> option should start with the header:</p>
+
+<pre><code>Test Id,Type,Source Location,Reference Location,Date Added,Date Modified,Release,Description
+</code></pre>
 
 <ul>
-<li>Test Case Number (int, PK)</li>
-<li>Test Type (string)</li>
-<li>URL to render (URL/string/blah)</li>
-<li>Reference location (string, two parts - TypeOfLocation:Location)</li>
-<li>Date Added (date)</li>
-<li>Date Modified (date)</li>
-<li>Release Added (string)</li>
-<li>Description (optional, string)</li>
-</ul><p>So the flow of the program:</p>
-
-<ul>
-<li>Start the engine</li>
-<li>Pass in arguments to allow you to specify certain things
-
-<ul>
-<li>Test number(s) to test</li>
-<li>Types of test(s) to run (like running all things of type 'lp')</li>
-</ul>
-</li>
-<li>Read in all the tests necessary (numbers, types, everything)</li>
-<li>Process all the things and do all the comparisons</li>
-<li>Generate a report with failures WITH NUSTACHE</li>
-</ul>
+<li>
+<code>Test Id</code> is the number of this test. It should be a unique identifying number.</li>
+<li>
+<code>Type</code> is the type of test this is.</li>
+<li>
+<code>Source Location</code> is the URI to obtain the image for comparison.</li>
+<li>
+<code>Reference Location</code> is the URI to the base image that is used for comparisons.</li>
+<li>
+<code>Date Added</code> is the date this test was added to the model.</li>
+<li>
+<code>Date Modified</code> is the date this test was last changed/updated.</li>
+<li>
+<code>Release</code> is the software release/version this test was originally created against.</li>
+<li>
+<code>Description</code> is a short comment about this test case.</li>
+</ul><p>A valid CSV file can be obtained by using the <code>batchadd</code> command.</p>
       </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/mochify">mochify</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
     </div>
-
+    <script src="javascripts/scale.fix.js"></script>
     
   </body>
 </html>
