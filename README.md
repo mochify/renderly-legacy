@@ -153,3 +153,7 @@ The CSV file you pass to the `-f` option should start with the header:
 * `Description` is a short comment about this test case.
 
 A valid CSV file can be obtained by using the `batchadd` command.
+
+## License
+
+Renderly is released under a very permissive [NCSA Open Source License](https://github.com/mochify/renderly/blob/master/LICENSE.md) license, because information wants to be free.
