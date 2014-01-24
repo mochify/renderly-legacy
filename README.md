@@ -1,6 +1,6 @@
 # Renderly
 
-Renderly is a .NET library and library for automated comparison of images. It is intended for use in environments where you want to periodically check generated images against a reference image to see if any changes have caused the images to render differently or incorrectly.
+Renderly is a .NET library and application for automated comparison of images. It is intended for use in environments where you want to periodically check generated images against a reference image to see if any changes have caused the images to render differently or incorrectly.
 
 ## Source Code Layout
 
@@ -30,7 +30,7 @@ I have not provided a build script yet, so right now you should open `Renderly` 
 
 ## Running RenderlyApp
 
-This applies to if you're using the included RenderlyApp. Running the `RenderlyApp.exe` without any arguments should produce the list of supported commands:
+This applies to you if you're using the included RenderlyApp. Running `RenderlyApp.exe` without any arguments should produce the list of supported commands:
 
     > .\RenderlyApp.exe -h
 
