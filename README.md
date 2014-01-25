@@ -156,4 +156,4 @@ A valid CSV file can be obtained by using the `batchadd` command.
 
 ## License
 
-Renderly is released under a very permissive [NCSA Open Source License](https://github.com/mochify/renderly/blob/master/LICENSE.md) license, because information wants to be free.
+Renderly is released under the [Apache License, Version 2.0](https://github.com/mochify/renderly/blob/master/LICENSE.md) license, because information wants to be free, but we want to be protected from patent retaliation.
