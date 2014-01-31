@@ -1,3 +1,11 @@
+# This Version of Renderly is Deprecated
+
+After building the original Renderly, I realized more things that I wanted to do with the core library, and I'm in the process of splitting this repository up. Only maintenance and bug fixes will go into this version.
+
+I split out RenderlyApp from Renderly and have moved it to [Renderly-New](https://github.com/mochify/renderly-next). The new project is backward compatible, but if you want to use this project as-is, note that there will be no new active development for this project.
+
+If you have any questions or issues, please file an issue.
+
 # Renderly
 
 Renderly is a .NET library and application for automated comparison of images. It is intended for use in environments where you want to periodically check generated images against a reference image to see if any changes have caused the images to render differently or incorrectly.
