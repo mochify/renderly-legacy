@@ -10,6 +10,10 @@ using Renderly.Utils;
 
 namespace Renderly.Reporting
 {
+    /// <summary>
+    /// An implementation of IReportService that takes ReportResult objects, saves their
+    /// assets, and generates a report.
+    /// </summary>
     public class ReportService : IReportService
     {
         /// <summary>
@@ -63,8 +67,9 @@ namespace Renderly.Reporting
 
         /// <summary>
         /// Add a test result to use for the final report.
+        /// 
         /// Note that passing in a TestResult does not transfer ownership
-        /// of the internal bitmaps to me.
+        /// of the internal bitmaps to this class.
         /// </summary>
         /// <param name="tr"></param>
         public void AddResult(TestResult tr)
@@ -121,7 +126,6 @@ namespace Renderly.Reporting
         /// <returns></returns>
         private dynamic PersistAssets(TestResult tr)
         {
-
             var images = new List<Tuple<Image, string>>();
 
             string fileExtension = Configuration.OutputImageType == "png" ? "png" : "jpg";

@@ -2,6 +2,19 @@
 
 namespace Renderly.Utils
 {
+    /// <summary>
+    /// This is an interface that defines the asset managers used for Renderly.
+    /// 
+    /// An asset manager is a class that handles CRUD operations on stuff beyond the application.
+    /// This includes things like files and anything that involves I/O beyond the program.
+    /// 
+    /// The goal of the asset manager is to abstract away concepts like the filesystem and
+    /// the network, because:
+    /// 
+    /// * It simplifies testing (can mock this class out or just use an implementation that doesn't use the filesystem)
+    /// * You may not want to be tied to an actual filesystem. The provided implementations of classes that require assets (like ReportService and RenderingController)
+    ///   do not rely on any specific location for their assets.
+    /// </summary>
     public interface IRenderlyAssetManager
     {
         /// <summary>
@@ -38,6 +51,7 @@ namespace Renderly.Utils
 
         /// <summary>
         /// Retrieves an object from a resource and saves it with a random name to a provided directory.
+        /// 
         /// </summary>
         /// <param name="fetchUri">The URI of the resource to retrieve.</param>
         /// <param name="saveDirectory">The directory to save the object in.</param>

@@ -4,6 +4,10 @@ using System.IO;
 
 namespace Renderly.Utils
 {
+    /// <summary>
+    /// This is a utility class that generates TestCase objects that can be added to
+    /// IModel implementations.
+    /// </summary>
     public class TestCaseGenerator
     {
         private IRenderlyAssetManager _fileManager;

@@ -8,6 +8,10 @@ using Renderly.Utils;
 
 namespace Renderly.Imaging
 {
+    /// <summary>
+    /// An implementation of AbstractImageComparer that uses AForge.net's
+    /// ExhaustiveTemplateMatching algorithm.
+    /// </summary>
     public class ExhaustiveTemplateComparer : AbstractImageComparer
     {
         ExhaustiveTemplateMatching _templateMatcher;
@@ -20,6 +24,8 @@ namespace Renderly.Imaging
 
         public override bool Matches(Bitmap reference, Bitmap compare)
         {
+            // AForge.net's ExhaustiveTemplateMatching object requires
+            // input images to be 24-bit RGB.
             Bitmap internalReference = reference.PixelFormat == PixelFormat.Format24bppRgb ?
                 reference : ImageUtils.CopyBitmap(reference, PixelFormat.Format24bppRgb);
 

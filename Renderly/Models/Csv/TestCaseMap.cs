@@ -2,6 +2,13 @@
 
 namespace Renderly.Models.Csv
 {
+    /// <summary>
+    /// This maps CSV columns to TestCase objects for the CSV files used
+    /// as part of the CsvModel class.
+    /// 
+    /// Look at <a href="http://joshclose.github.io/CsvHelper/#mapping-fluent-class-mapping">Fluent Class Mapping</a>
+    /// on the CsvHelper project.
+    /// </summary>
     class TestCaseMap : CsvClassMap<TestCase>
     {
         public override void CreateMap()

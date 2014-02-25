@@ -7,7 +7,8 @@ using Microsoft.Win32;
 namespace Renderly.Utils
 {
     /// <summary>
-    /// This class interacts with the file system/native system to get files.
+    /// This is an implementatin of IRenderlyAssetManager that interacts with the native filesystem
+    /// and network to retrieve/store assets.
     /// </summary>
     public class RenderlyNativeAssetManager : IRenderlyAssetManager
     {
@@ -54,20 +55,39 @@ namespace Renderly.Utils
 
         public string FetchToRandomFilename(string fetchUri, string outputDirectory)
         {
-            CreateFolder(outputDirectory);
+            if (fetchUri == null)
+            {
+                throw new ArgumentNullException("fetchUri can not be null");
+            }
+
+            if (outputDirectory == null)
+            {
+                throw new ArgumentNullException("outputDirectory can not be null");
+            }
+
+            if (string.IsNullOrWhiteSpace(outputDirectory))
+            {
+                throw new ArgumentException("outputDirectory can not be empty or null");
+            }
+
+            Uri outputUri = new Uri(outputDirectory);
             Uri uri = new Uri(fetchUri);
+            CreateFolder(outputDirectory);
+            
 
             string randomName = Guid.NewGuid().ToString("N");
 
             if (uri.IsFile || uri.IsUnc)
             {
                 randomName = string.Format("{0}{1}", randomName, Path.GetExtension(uri.AbsoluteUri));
-                File.Copy(uri.LocalPath, Path.Combine(outputDirectory, randomName));
+                File.Copy(uri.LocalPath, Path.Combine(outputUri.LocalPath, randomName));
             }
             else
             {
-                // I'm assuming that you're not going to be giving me non file/non-HTTP stuff here,
+                // If it gets here, I'm assuming that you're not going to be giving me non file/non-HTTP URIs,
                 // since I'm going to use a download now.
+                // HttpWebRequest is used because it gives us access to the
+                // ContentType in the response, where WebClient does not without an extension method.
                 HttpWebRequest request = WebRequest.Create(uri) as HttpWebRequest;
                 using (var response = request.GetResponse())
                 {

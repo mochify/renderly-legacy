@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace Renderly.Models
 {
+    /// <summary>
+    /// The interface that defines the data model for Renderly test cases.
+    /// </summary>
     public interface ITestCaseModel
     {
         /// <summary>

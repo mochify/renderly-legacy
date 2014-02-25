@@ -48,6 +48,10 @@ namespace Renderly.Models.Csv
             }
         }
 
+        /// <summary>
+        /// Retrieve an iterator over the test cases.
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<TestCase> GetTestCases()
         {
             // If you're unfamiliar with this Skip(0), it basically yields
@@ -56,6 +60,11 @@ namespace Renderly.Models.Csv
             return _data.Skip(0);
         }
 
+        /// <summary>
+        /// Retrieve an iterator to the test cases that match a provided predicate.
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
         public IEnumerable<TestCase> GetTestCases(Func<TestCase, bool> predicate)
         {
             return _data.Where(predicate);
@@ -65,6 +74,8 @@ namespace Renderly.Models.Csv
         /// Adds a test case to the model. Since this is CSV, the Test ID field will be mutated automatically by this to the
         /// next highest-available test case ID. Does not use gaps (i.e. if you have test case IDs 1 and 3, this does not use '2'
         /// for the added case. Instead it will use '4').
+        /// 
+        /// Changes are not persisted until you call Save() on the model.
         /// </summary>
         /// <param name="tc"></param>
         public void AddTestCase(TestCase tc)
@@ -73,6 +84,12 @@ namespace Renderly.Models.Csv
             InternalAddTestCase(tc);
         }
 
+        /// <summary>
+        /// Add multiple test cases to the model.
+        /// 
+        /// Changes made with this method are not persisted until you call Save() on the model.
+        /// </summary>
+        /// <param name="it"></param>
         public void AddTestCases(IEnumerable<TestCase> it)
         {
             // TODO this stifles multi-threading/parallel methods doing AddTestCases/AddTestCase
@@ -118,7 +135,7 @@ namespace Renderly.Models.Csv
 
 
         /// <summary>
-        /// Write out the CSV file again.
+        /// Save the model. Writes out the CSV file again.
         /// </summary>
         public void Save()
         {

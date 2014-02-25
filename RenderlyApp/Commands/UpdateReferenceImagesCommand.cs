@@ -7,11 +7,14 @@ using Renderly;
 using Renderly.Models.Csv;
 using Renderly.Utils;
 
-
 using ManyConsole;
 
 namespace RenderlyApp.Commands
 {
+    /// <summary>
+    /// This class implements the 'updateref' command, which allows you to
+    /// update the reference image used for a test case.
+    /// </summary>
     class UpdateReferenceImagesCommand : ConsoleCommand
     {
         private string ModelFile { get; set; }
