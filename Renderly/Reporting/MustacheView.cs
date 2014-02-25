@@ -5,7 +5,8 @@ using Nustache.Core;
 namespace Renderly.Reporting
 {
     /// <summary>
-    /// This is a b
+    /// This is an implementation of IReportView that uses the
+    /// <a href="http://mustache.github.io/">Mustache templating language</a>.
     /// </summary>
     public class MustacheView : IReportView
     {

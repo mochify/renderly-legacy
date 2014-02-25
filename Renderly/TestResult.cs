@@ -5,6 +5,13 @@ using System.Drawing;
 
 namespace Renderly
 {
+    /// <summary>
+    /// A data object that represents the results of a test run.
+    /// 
+    /// It has references to Reference, Source, and Difference images,
+    /// as well as other data about the test like what ID it was, whether
+    /// or not it passed, and any comments about the test (like Exceptions).
+    /// </summary>
     public class TestResult : IDisposable
     {
         private bool _disposed;

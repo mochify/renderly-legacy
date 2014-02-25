@@ -11,8 +11,8 @@ namespace Renderly.Imaging
         /// <summary>
         /// This method determines if two images are a match, based on a threshold.
         /// </summary>
-        /// <param name="reference">The reference/base image to use for comparison. Should be a 24 bit RGB bitmap.</param>
-        /// <param name="compare">The image to compare the reference against. Should be a 24 bit RGB bitmap.</param>
+        /// <param name="reference">The reference/base image to use for comparison.</param>
+        /// <param name="compare">The image to compare the reference against.</param>
         /// <returns></returns>
         bool Matches(Bitmap reference, Bitmap compare);
 

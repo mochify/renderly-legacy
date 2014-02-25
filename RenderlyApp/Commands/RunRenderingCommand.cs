@@ -15,6 +15,9 @@ using ManyConsole;
 
 namespace RenderlyApp.Commands
 {
+    /// <summary>
+    /// This class implements the 'run' command of the RenderlyApp.
+    /// </summary>
     class RunRenderingCommand : ConsoleCommand
     {
         private string DataSource { get; set; }
@@ -59,6 +62,21 @@ namespace RenderlyApp.Commands
                 x => { TestTypes = x.Replace(" ", "").Split(','); });
         }
 
+        /// <summary>
+        /// Composes all the behavior of the 'run' command.
+        /// 
+        /// All functionality necessary is called from this method, and all data
+        /// is passed between different parts of the application at this level.
+        /// 
+        /// Here the program reads data from the Model layer (CsvModel),
+        /// sends it to the Controller layer (RenderingController),
+        /// and then passes the results from that layer to the view/reporting layer (ReportService).
+        /// 
+        /// The Model, Controller, and View layers do not have any knowledge of each other.
+        /// 
+        /// </summary>
+        /// <param name="remainingArguments"></param>
+        /// <returns></returns>
         public override int Run(string[] remainingArguments)
         {
             // save people from aggressive thresholding.
@@ -69,6 +87,8 @@ namespace RenderlyApp.Commands
 
             var fileManager = new RenderlyNativeAssetManager();
 
+            // Open the CSV file off disk and filter out anything based on
+            // the command line arguments
             var stream = new FileStream(DataSource, FileMode.Open, FileAccess.Read);
             using (var model = new CsvModel(stream, fileManager))
             {
@@ -116,6 +136,13 @@ namespace RenderlyApp.Commands
                 var controller = new RenderingController(new ExhaustiveTemplateComparer(Threshold), fileManager);
                 var directory = Directory.CreateDirectory(OutputDirectory);
                 var results = controller.RunTests(testCases);
+
+                // This is a funky looking syntax that iterates over all the
+                // TestResult objects in 'results', and then uses a 'using (r)'
+                // on the object in order to dispose its unmanaged assets
+                // after the object is used.
+                // This is because TestResult has bitmap references that
+                // need to be cleaned up.
                 foreach (var r in results) using (r)
                 {
                     reportService.AddResult(r);

@@ -9,11 +9,20 @@ using System.IO;
 
 namespace Renderly.Controllers
 {
+    /// <summary>
+    /// This class drives the image comparison testing. It allows you to passin TestCases
+    /// objects and get TestResult objects back.
+    /// </summary>
     public class RenderingController
     {
         private IImageComparer _imageComparer;
         private IRenderlyAssetManager _fileManager;
-
+        
+        /// <summary>
+        /// Instantiates a RenderingController with its dependencies constructor-injected.
+        /// </summary>
+        /// <param name="comparer"></param>
+        /// <param name="fileManager"></param>
         public RenderingController(IImageComparer comparer, IRenderlyAssetManager fileManager)
         {
             if (comparer == null)

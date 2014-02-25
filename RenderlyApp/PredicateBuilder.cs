@@ -4,6 +4,11 @@ using System.Linq.Expressions;
 
 namespace RenderlyApp
 {
+    /// <summary>
+    /// This is a helper class that allows you to dynamically compose LINQ predicates.
+    /// 
+    /// Borrowed from albahari.com (http://www.albahari.com/nutshell/predicatebuilder.aspx)
+    /// </summary>
     public static class PredicateBuilder
     {
         public static Expression<Func<T, bool>> True<T>() { return f => true; }
